@@ -402,6 +402,48 @@ export default function ChronoWatchCockpit() {
                 </button>
               </div>
 
+              {/* Linear 60-Second Perimeter Tick Index */}
+              {now && (() => {
+                const currentSec = now.getSeconds();
+                return (
+                  <div className="my-3 space-y-1">
+                    <div className="grid grid-cols-60 gap-[1.5px] sm:gap-[2px] h-2 sm:h-2.5 items-end">
+                      {Array.from({ length: 60 }).map((_, secIdx) => {
+                        const isPastOrCurrent = secIdx <= currentSec;
+                        const isCurrent = secIdx === currentSec;
+                        const isMajorQuarter = secIdx % 15 === 0; // 0, 15, 30, 45
+                        const isFiveSec = secIdx % 5 === 0;
+
+                        return (
+                          <div
+                            key={secIdx}
+                            className={`transition-all duration-150 ${
+                              isMajorQuarter ? "h-full" : isFiveSec ? "h-4/5" : "h-1/2"
+                            } ${
+                              isCurrent
+                                ? "bg-amber-400 scale-y-125 shadow-xs shadow-amber-400"
+                                : isPastOrCurrent
+                                  ? theme === "dark" ? "bg-amber-500/70" : "bg-amber-600/80"
+                                  : theme === "dark" ? "bg-neutral-800" : "bg-neutral-300"
+                            }`}
+                            title={`${secIdx}s`}
+                          />
+                        );
+                      })}
+                    </div>
+                    <div className="flex items-center justify-between text-[7px] sm:text-[8px] font-mono font-bold text-neutral-500 tracking-wider">
+                      <span>00s</span>
+                      <span>15s</span>
+                      <span>30s</span>
+                      <span>45s</span>
+                      <span className={theme === "dark" ? "text-amber-400 font-black" : "text-amber-700 font-black"}>
+                        {String(currentSec).padStart(2, "0")}s / 60s
+                      </span>
+                    </div>
+                  </div>
+                );
+              })()}
+
               {/* Primary Clock Digits with Sub-pixel Kerning */}
               {now ? (() => {
                 let hours = now.getHours();

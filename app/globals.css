@@ -43,6 +43,11 @@ body {
   background-size: 6px 6px;
 }
 
+/* 60-Second Perimeter Tick Grid */
+.grid-cols-60 {
+  grid-template-columns: repeat(60, minmax(0, 1fr));
+}
+
 /* Custom terminal scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
