@@ -359,54 +359,24 @@ export default function ChronoWatchCockpit() {
         {activeMode === "CLOCK" && (
           <div className="space-y-4 sm:space-y-6">
             
-            {/* Minimal & Sober Dashed Watch Box with Hardware Corner Reticles & Moving 60-Second Perimeter Border */}
-            <div className={`border-2 border-dashed p-8 sm:p-14 transition-all duration-300 relative group overflow-hidden ${
+            {/* Minimal & Sober Dashed Watch Box with Hardware Corner Reticles */}
+            <div className={`border-2 border-dashed p-8 sm:p-14 transition-all duration-300 relative group ${
               theme === "dark" 
                 ? "border-[#33322e] bg-[#161614] hover:border-neutral-400 lcd-matrix-dark" 
                 : "border-neutral-400 bg-white shadow-sm hover:border-neutral-800 lcd-matrix-light"
             }`}>
-
-              {/* Moving 60-Second Perimeter Boundary Track */}
-              {now && (() => {
-                const sec = now.getSeconds();
-                const millis = now.getMilliseconds ? now.getMilliseconds() : 0;
-                const exactSec = sec + millis / 1000;
-                const minuteProgress = (exactSec / 60) * 100;
-
-                return (
-                  <svg
-                    className="absolute inset-0 w-full h-full pointer-events-none z-10"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <rect
-                      x="1"
-                      y="1"
-                      width="calc(100% - 2px)"
-                      height="calc(100% - 2px)"
-                      fill="none"
-                      stroke={theme === "dark" ? "#f59e0b" : "#d97706"}
-                      strokeWidth="2.5"
-                      pathLength="100"
-                      strokeDasharray="100"
-                      strokeDashoffset={100 - minuteProgress}
-                      className="transition-all duration-1000 ease-linear"
-                      strokeLinecap="square"
-                    />
-                  </svg>
-                );
-              })()}
               
               {/* 4 Hardware Corner Reticles / Precision Crosshairs */}
-              <div className={`absolute -top-2.5 -left-2.5 text-xs font-mono font-black select-none pointer-events-none z-20 transition-colors ${
+              <div className={`absolute -top-2.5 -left-2.5 text-xs font-mono font-black select-none pointer-events-none transition-colors ${
                 theme === "dark" ? "text-neutral-600 group-hover:text-amber-500" : "text-neutral-400 group-hover:text-amber-600"
               }`}>+</div>
-              <div className={`absolute -top-2.5 -right-2.5 text-xs font-mono font-black select-none pointer-events-none z-20 transition-colors ${
+              <div className={`absolute -top-2.5 -right-2.5 text-xs font-mono font-black select-none pointer-events-none transition-colors ${
                 theme === "dark" ? "text-neutral-600 group-hover:text-amber-500" : "text-neutral-400 group-hover:text-amber-600"
               }`}>+</div>
-              <div className={`absolute -bottom-2.5 -left-2.5 text-xs font-mono font-black select-none pointer-events-none z-20 transition-colors ${
+              <div className={`absolute -bottom-2.5 -left-2.5 text-xs font-mono font-black select-none pointer-events-none transition-colors ${
                 theme === "dark" ? "text-neutral-600 group-hover:text-amber-500" : "text-neutral-400 group-hover:text-amber-600"
               }`}>+</div>
-              <div className={`absolute -bottom-2.5 -right-2.5 text-xs font-mono font-black select-none pointer-events-none z-20 transition-colors ${
+              <div className={`absolute -bottom-2.5 -right-2.5 text-xs font-mono font-black select-none pointer-events-none transition-colors ${
                 theme === "dark" ? "text-neutral-600 group-hover:text-amber-500" : "text-neutral-400 group-hover:text-amber-600"
               }`}>+</div>
 
