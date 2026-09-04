@@ -613,17 +613,11 @@ export default function ChronoWatchCockpit() {
                     {DEFAULT_ZONES.map((zone) => {
                       let timeStr = "--:--:--";
                       let dateStr = "---";
-                      let isWorkHours = false;
-                      let isNight = false;
 
                       if (now) {
                         try {
                           timeStr = now.toLocaleTimeString("en-GB", { timeZone: zone.tz, hour12: false });
                           dateStr = now.toLocaleDateString("en-GB", { timeZone: zone.tz, month: "short", day: "numeric" });
-                          
-                          const hours = parseInt(timeStr.split(":")[0], 10);
-                          isWorkHours = hours >= 9 && hours < 17;
-                          isNight = hours < 6 || hours >= 22;
                         } catch {}
                       }
 
@@ -631,25 +625,21 @@ export default function ChronoWatchCockpit() {
                         <div
                           key={zone.code}
                           className={`p-3 border transition-colors ${
-                            isWorkHours
-                              ? theme === "dark" ? "border-emerald-500/40 bg-emerald-500/[0.04]" : "border-emerald-500/60 bg-emerald-50 shadow-xs"
-                              : isNight
-                                ? theme === "dark" ? "border-[#242420] bg-[#10100e]" : "border-neutral-300 bg-white"
-                                : theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-neutral-300 bg-white shadow-xs"
+                            theme === "dark" 
+                              ? "border-[#383733] bg-[#181816] hover:border-neutral-500" 
+                              : "border-neutral-300 bg-white shadow-xs hover:border-neutral-700"
                           } space-y-1.5`}
                         >
                           <div className={`flex items-center justify-between text-[9px] font-bold uppercase ${
                             theme === "dark" ? "text-neutral-500" : "text-neutral-700 font-black"
                           }`}>
                             <span className="truncate">{zone.city}</span>
-                            <span className={`text-[8px] px-1 py-0.2 border ${
-                              isWorkHours
-                                ? "border-emerald-500/50 text-emerald-600 bg-emerald-100 font-black"
-                                : isNight
-                                  ? theme === "dark" ? "border-neutral-700 text-neutral-500" : "border-neutral-300 text-neutral-600 bg-neutral-100 font-bold"
-                                  : theme === "dark" ? "border-amber-500/40 text-amber-400" : "border-amber-400 text-amber-900 bg-amber-100 font-bold"
+                            <span className={`text-[8px] font-mono px-1 py-0.2 border ${
+                              theme === "dark" 
+                                ? "border-amber-500/30 text-amber-400 bg-amber-500/5" 
+                                : "border-neutral-300 text-neutral-800 bg-neutral-100 font-bold"
                             }`}>
-                              {isWorkHours ? "WORK" : isNight ? "NIGHT" : "OFF"}
+                              {zone.code}
                             </span>
                           </div>
                           
@@ -661,7 +651,7 @@ export default function ChronoWatchCockpit() {
                             theme === "dark" ? "text-neutral-500" : "text-neutral-700"
                           }`}>
                             <span>{dateStr}</span>
-                            <span className={theme === "dark" ? "text-amber-500" : "text-amber-700 font-black"}>[{zone.code}]</span>
+                            <span className={theme === "dark" ? "text-amber-500" : "text-amber-700 font-black"}>ZONE</span>
                           </div>
                         </div>
                       );
