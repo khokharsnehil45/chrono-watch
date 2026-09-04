@@ -23,7 +23,9 @@ import {
   Sparkles,
   Zap,
   Flame,
-  CheckCircle2
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
 
 type Mode = "CLOCK" | "CHRONO" | "INTERVAL" | "METRONOME";
@@ -51,6 +53,7 @@ export default function ChronoWatchCockpit() {
   const [now, setNow] = useState<Date | null>(null);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [is24Hour, setIs24Hour] = useState<boolean>(true);
+  const [showWorldClock, setShowWorldClock] = useState<boolean>(false);
 
   // Stopwatch state
   const [chronoRunning, setChronoRunning] = useState<boolean>(false);
@@ -387,73 +390,111 @@ export default function ChronoWatchCockpit() {
 
             </div>
 
-            {/* Multi-Timezone Radar Grid */}
-            <div className={`p-4 border ${theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-[#d4d2c7] bg-white shadow-xs"} space-y-4`}>
-              
-              {/* Header */}
-              <div className="flex items-center justify-between">
-                <div className={`text-xs font-black uppercase flex items-center gap-1.5 ${textPrimary}`}>
-                  <Globe className="w-3.5 h-3.5 text-amber-500" />
-                  GLOBAL TIMEZONE RADAR MATRIX
-                </div>
-                <span className="text-[10px] font-mono text-neutral-500">LIVE SYNCHRONIZED</span>
-              </div>
-
-              {/* World Cities Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-                {DEFAULT_ZONES.map((zone) => {
-                  let timeStr = "--:--:--";
-                  let dateStr = "---";
-                  let isWorkHours = false;
-                  let isNight = false;
-
-                  if (now) {
-                    try {
-                      timeStr = now.toLocaleTimeString("en-GB", { timeZone: zone.tz, hour12: false });
-                      dateStr = now.toLocaleDateString("en-GB", { timeZone: zone.tz, month: "short", day: "numeric" });
-                      
-                      const hours = parseInt(timeStr.split(":")[0], 10);
-                      isWorkHours = hours >= 9 && hours < 17;
-                      isNight = hours < 6 || hours >= 22;
-                    } catch {}
-                  }
-
-                  return (
-                    <div
-                      key={zone.code}
-                      className={`p-3 border transition-colors ${
-                        isWorkHours
-                          ? theme === "dark" ? "border-emerald-500/40 bg-emerald-500/[0.04]" : "border-emerald-400 bg-emerald-50/50"
-                          : isNight
-                            ? theme === "dark" ? "border-[#242420] bg-[#10100e]" : "border-neutral-200 bg-neutral-100"
-                            : theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-[#d4d2c7] bg-white"
-                      } space-y-1.5`}
-                    >
-                      <div className="flex items-center justify-between text-[9px] font-bold text-neutral-500 uppercase">
-                        <span className="truncate">{zone.city}</span>
-                        <span className={`text-[8px] px-1 py-0.2 border ${
-                          isWorkHours
-                            ? "border-emerald-500/50 text-emerald-400 bg-emerald-500/10"
-                            : isNight
-                              ? "border-neutral-700 text-neutral-500"
-                              : "border-amber-500/40 text-amber-400"
-                        }`}>
-                          {isWorkHours ? "WORK" : isNight ? "NIGHT" : "OFF"}
-                        </span>
-                      </div>
-                      
-                      <div className={`text-lg sm:text-xl font-black font-mono ${textPrimary}`}>
-                        {timeStr}
-                      </div>
-
-                      <div className="flex items-center justify-between text-[10px] text-neutral-500 font-medium">
-                        <span>{dateStr}</span>
-                        <span className="text-amber-500">[{zone.code}]</span>
-                      </div>
+            {/* Collapsible Global Timezone Box */}
+            <div className={`border transition-all duration-200 ${
+              theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-[#d4d2c7] bg-white shadow-xs"
+            }`}>
+              {/* Clickable Header Button */}
+              <button
+                onClick={() => {
+                  setShowWorldClock(!showWorldClock);
+                  playBeep(showWorldClock ? 440 : 660);
+                }}
+                className={`w-full p-4 flex items-center justify-between text-left cursor-pointer transition-colors ${
+                  theme === "dark" ? "hover:bg-[#20201d]" : "hover:bg-neutral-50"
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className={`p-1 border ${
+                    theme === "dark" ? "border-amber-500/30 bg-amber-500/10 text-amber-400" : "border-amber-300 bg-amber-100 text-amber-800"
+                  }`}>
+                    <Globe className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className={`text-xs font-black uppercase tracking-wider ${textPrimary}`}>
+                      GLOBAL TIMEZONE MATRIX
                     </div>
-                  );
-                })}
-              </div>
+                    <div className="text-[10px] text-neutral-500 font-mono">
+                      {showWorldClock ? "8 WORLD CITIES ACTIVE" : "CLICK TO EXPAND 8 WORLD CITIES"}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <span className={`text-[9px] font-mono font-bold px-2 py-0.5 border ${
+                    showWorldClock
+                      ? theme === "dark" ? "border-amber-500/40 bg-amber-500/10 text-amber-300" : "border-amber-400 bg-amber-100 text-amber-900"
+                      : theme === "dark" ? "border-neutral-800 text-neutral-500" : "border-neutral-200 text-neutral-600"
+                  }`}>
+                    {showWorldClock ? "OPEN" : "COLLAPSED"}
+                  </span>
+                  {showWorldClock ? (
+                    <ChevronUp className="w-4 h-4 text-neutral-400" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 text-neutral-400" />
+                  )}
+                </div>
+              </button>
+
+              {/* Collapsible Content */}
+              {showWorldClock && (
+                <div className={`p-4 border-t ${theme === "dark" ? "border-[#2c2b28] bg-[#141412]" : "border-[#e5e3d8] bg-[#fcfbf9]"} space-y-4`}>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                    {DEFAULT_ZONES.map((zone) => {
+                      let timeStr = "--:--:--";
+                      let dateStr = "---";
+                      let isWorkHours = false;
+                      let isNight = false;
+
+                      if (now) {
+                        try {
+                          timeStr = now.toLocaleTimeString("en-GB", { timeZone: zone.tz, hour12: false });
+                          dateStr = now.toLocaleDateString("en-GB", { timeZone: zone.tz, month: "short", day: "numeric" });
+                          
+                          const hours = parseInt(timeStr.split(":")[0], 10);
+                          isWorkHours = hours >= 9 && hours < 17;
+                          isNight = hours < 6 || hours >= 22;
+                        } catch {}
+                      }
+
+                      return (
+                        <div
+                          key={zone.code}
+                          className={`p-3 border transition-colors ${
+                            isWorkHours
+                              ? theme === "dark" ? "border-emerald-500/40 bg-emerald-500/[0.04]" : "border-emerald-400 bg-emerald-50/50"
+                              : isNight
+                                ? theme === "dark" ? "border-[#242420] bg-[#10100e]" : "border-neutral-200 bg-neutral-100"
+                                : theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-[#d4d2c7] bg-white"
+                          } space-y-1.5`}
+                        >
+                          <div className="flex items-center justify-between text-[9px] font-bold text-neutral-500 uppercase">
+                            <span className="truncate">{zone.city}</span>
+                            <span className={`text-[8px] px-1 py-0.2 border ${
+                              isWorkHours
+                                ? "border-emerald-500/50 text-emerald-400 bg-emerald-500/10"
+                                : isNight
+                                  ? "border-neutral-700 text-neutral-500"
+                                  : "border-amber-500/40 text-amber-400"
+                            }`}>
+                              {isWorkHours ? "WORK" : isNight ? "NIGHT" : "OFF"}
+                            </span>
+                          </div>
+                          
+                          <div className={`text-lg sm:text-xl font-black font-mono ${textPrimary}`}>
+                            {timeStr}
+                          </div>
+
+                          <div className="flex items-center justify-between text-[10px] text-neutral-500 font-medium">
+                            <span>{dateStr}</span>
+                            <span className="text-amber-500">[{zone.code}]</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
 
           </div>
