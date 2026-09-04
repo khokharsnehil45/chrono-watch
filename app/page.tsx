@@ -398,34 +398,31 @@ export default function ChronoWatchCockpit() {
         {activeMode === "CLOCK" && (
           <div className="space-y-4 sm:space-y-6">
             
-            {/* Simple Dashed Holding Box with Hover Glow Highlight */}
-            <div className={`border-2 border-dashed p-6 sm:p-12 transition-all duration-200 group relative ${
+            {/* Minimal & Sober Dashed Watch Box */}
+            <div className={`border-2 border-dashed p-8 sm:p-14 transition-all duration-300 relative ${
               theme === "dark" 
-                ? "border-[#383733] bg-[#181816] hover:border-amber-500 hover:bg-amber-500/[0.03] hover:shadow-lg hover:shadow-amber-500/5" 
-                : "border-[#d4d2c7] bg-white hover:border-amber-600 hover:bg-amber-50/30 hover:shadow-md"
+                ? "border-[#33322e] bg-[#161614] hover:border-neutral-400" 
+                : "border-[#d8d6cb] bg-[#faf9f5] hover:border-neutral-700"
             }`}>
               
-              {/* Header inside dashed box */}
-              <div className="flex items-center justify-between text-[10px] sm:text-xs font-black uppercase text-neutral-500 group-hover:text-amber-500 transition-colors mb-2">
-                <span className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 bg-amber-500 transition-transform group-hover:scale-125"></span>
-                  <span>SYSTEM LOCAL TIME</span>
-                </span>
+              {/* Header inside box */}
+              <div className="flex items-center justify-between text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider text-neutral-500 mb-4">
+                <span>{now ? Intl.DateTimeFormat().resolvedOptions().timeZone : "LOCAL TIME"}</span>
                 
                 {/* 12H / 24H Toggle */}
                 <button
                   onClick={() => setIs24Hour(!is24Hour)}
-                  className={`px-2 py-0.5 border text-[9px] font-bold uppercase transition cursor-pointer ${
+                  className={`px-2 py-0.5 border text-[9px] font-mono font-bold uppercase transition cursor-pointer ${
                     theme === "dark" 
-                      ? "border-[#383733] group-hover:border-amber-500/50 bg-[#1c1c1a] text-neutral-300 group-hover:text-amber-300" 
-                      : "border-neutral-300 group-hover:border-amber-500 bg-neutral-100 text-neutral-800"
+                      ? "border-neutral-700 bg-neutral-900 text-neutral-400 hover:text-white" 
+                      : "border-neutral-300 bg-white text-neutral-700 hover:text-black"
                   }`}
                 >
-                  {is24Hour ? "24 HR" : "12 HR"}
+                  {is24Hour ? "24H" : "12H"}
                 </button>
               </div>
 
-              {/* Primary Huge Digits */}
+              {/* Primary Clock Digits */}
               {now ? (() => {
                 let hours = now.getHours();
                 let ampm = "";
@@ -438,14 +435,14 @@ export default function ChronoWatchCockpit() {
                 const secStr = String(now.getSeconds()).padStart(2, "0");
 
                 return (
-                  <div className="font-mono text-5xl sm:text-8xl md:text-9xl font-black tracking-tight flex items-baseline justify-center gap-1 sm:gap-3 my-2 sm:my-4">
+                  <div className="font-mono text-6xl sm:text-8xl md:text-9xl font-black tracking-tight flex items-baseline justify-center gap-1 sm:gap-2 my-2 sm:my-4">
                     <span className={textPrimary}>{hrsStr}</span>
-                    <span className="text-amber-500 animate-pulse">:</span>
+                    <span className="text-neutral-500">:</span>
                     <span className={textPrimary}>{minStr}</span>
-                    <span className="text-amber-500 animate-pulse">:</span>
-                    <span className="text-amber-500 font-bold">{secStr}</span>
+                    <span className="text-neutral-500">:</span>
+                    <span className={textPrimary}>{secStr}</span>
                     {!is24Hour && (
-                      <span className="text-xs sm:text-xl font-black text-amber-400 ml-1 sm:ml-2">{ampm}</span>
+                      <span className="text-xs sm:text-lg font-bold text-neutral-500 ml-2">{ampm}</span>
                     )}
                   </div>
                 );
@@ -453,32 +450,9 @@ export default function ChronoWatchCockpit() {
                 <div className="text-4xl text-neutral-600 py-8 font-mono text-center">00:00:00</div>
               )}
 
-              {/* Date Banner */}
-              <div className={`text-center text-xs sm:text-sm font-bold uppercase tracking-widest ${textSecondary}`}>
-                {now ? now.toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" }) : "---"}
-              </div>
-
-              {/* Progress of Current Day */}
-              {now && (
-                <div className="mt-6 space-y-1.5 max-w-md mx-auto">
-                  <div className="flex items-center justify-between text-[10px] text-neutral-500 font-bold font-mono">
-                    <span>DAY CYCLE PROGRESS</span>
-                    <span className="text-amber-500">
-                      {Math.round(((now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()) / 86400) * 100)}%
-                    </span>
-                  </div>
-                  <div className="w-full h-2 bg-neutral-900 border border-[#383733] group-hover:border-amber-500/40 overflow-hidden transition-colors">
-                    <div
-                      className="h-full bg-amber-500 transition-all duration-300"
-                      style={{ width: `${((now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()) / 86400) * 100}%` }}
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Ticking Epoch Tag */}
-              <div className="text-center mt-4 text-[9px] text-neutral-500 font-mono">
-                EPOCH: <strong className="text-neutral-400">{now ? Math.floor(now.getTime() / 1000) : "---"}</strong> • {now ? Intl.DateTimeFormat().resolvedOptions().timeZone : "SYNCING"}
+              {/* Sober Date Line */}
+              <div className="text-center text-xs sm:text-sm font-mono font-medium uppercase tracking-widest text-neutral-500 mt-2">
+                {now ? now.toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "short", day: "numeric" }) : "---"}
               </div>
 
             </div>
