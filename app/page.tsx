@@ -899,9 +899,55 @@ export default function ChronoWatchCockpit() {
         {activeMode === "CHRONO" && (
           <div className="space-y-4">
             
-            <div className={`p-6 sm:p-10 border-2 ${
-              theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-[#d4d2c7] bg-white shadow-md"
+            {/* Minimal & Sober Dashed Stopwatch Box with Hardware Corner Reticles & Moving 60-Second Perimeter Border */}
+            <div className={`border-2 border-dashed p-6 sm:p-12 transition-all duration-300 relative group overflow-hidden ${
+              theme === "dark" 
+                ? "border-[#33322e] bg-[#161614] hover:border-neutral-400 lcd-matrix-dark" 
+                : "border-neutral-400 bg-white shadow-sm hover:border-neutral-800 lcd-matrix-light"
             } text-center space-y-6`}>
+
+              {/* Moving 60-Second Perimeter Boundary Track for Stopwatch */}
+              {(() => {
+                // Calculate position in current 60s cycle (0ms to 60000ms)
+                const secCycleMs = chronoTimeMs % 60000;
+                const minuteProgress = (secCycleMs / 60000) * 100;
+
+                return (
+                  <svg
+                    className="absolute inset-0 w-full h-full pointer-events-none z-10"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <rect
+                      x="1"
+                      y="1"
+                      width="calc(100% - 2px)"
+                      height="calc(100% - 2px)"
+                      fill="none"
+                      stroke={chronoRunning ? (theme === "dark" ? "#f59e0b" : "#d97706") : (theme === "dark" ? "#404040" : "#d4d4d4")}
+                      strokeWidth="2.5"
+                      pathLength="100"
+                      strokeDasharray="100"
+                      strokeDashoffset={100 - minuteProgress}
+                      className={chronoRunning ? "transition-all duration-100 ease-linear" : "transition-none"}
+                      strokeLinecap="square"
+                    />
+                  </svg>
+                );
+              })()}
+
+              {/* 4 Hardware Corner Reticles / Precision Crosshairs */}
+              <div className={`absolute -top-2.5 -left-2.5 text-xs font-mono font-black select-none pointer-events-none z-20 transition-colors ${
+                theme === "dark" ? "text-neutral-600 group-hover:text-amber-500" : "text-neutral-400 group-hover:text-amber-600"
+              }`}>+</div>
+              <div className={`absolute -top-2.5 -right-2.5 text-xs font-mono font-black select-none pointer-events-none z-20 transition-colors ${
+                theme === "dark" ? "text-neutral-600 group-hover:text-amber-500" : "text-neutral-400 group-hover:text-amber-600"
+              }`}>+</div>
+              <div className={`absolute -bottom-2.5 -left-2.5 text-xs font-mono font-black select-none pointer-events-none z-20 transition-colors ${
+                theme === "dark" ? "text-neutral-600 group-hover:text-amber-500" : "text-neutral-400 group-hover:text-amber-600"
+              }`}>+</div>
+              <div className={`absolute -bottom-2.5 -right-2.5 text-xs font-mono font-black select-none pointer-events-none z-20 transition-colors ${
+                theme === "dark" ? "text-neutral-600 group-hover:text-amber-500" : "text-neutral-400 group-hover:text-amber-600"
+              }`}>+</div>
               
               <div className="text-[10px] uppercase font-bold text-amber-500">
                 HIGH-RESOLUTION MILLISECOND TIMER
@@ -985,9 +1031,54 @@ export default function ChronoWatchCockpit() {
         {activeMode === "INTERVAL" && (
           <div className="space-y-4">
             
-            <div className={`p-6 sm:p-10 border-2 ${
-              theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-[#d4d2c7] bg-white shadow-md"
+            {/* Minimal & Sober Dashed Focus Timer Box with Hardware Corner Reticles & Moving Boundary */}
+            <div className={`border-2 border-dashed p-6 sm:p-12 transition-all duration-300 relative group overflow-hidden ${
+              theme === "dark" 
+                ? "border-[#33322e] bg-[#161614] hover:border-neutral-400 lcd-matrix-dark" 
+                : "border-neutral-400 bg-white shadow-sm hover:border-neutral-800 lcd-matrix-light"
             } text-center space-y-6`}>
+
+              {/* Moving 60-Second Perimeter Boundary Track for Focus Countdown */}
+              {(() => {
+                // Percentage of current focus interval elapsed
+                const progress = ((intervalDurationSec - intervalRemainingSec) / Math.max(1, intervalDurationSec)) * 100;
+
+                return (
+                  <svg
+                    className="absolute inset-0 w-full h-full pointer-events-none z-10"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <rect
+                      x="1"
+                      y="1"
+                      width="calc(100% - 2px)"
+                      height="calc(100% - 2px)"
+                      fill="none"
+                      stroke={intervalRunning ? (theme === "dark" ? "#f59e0b" : "#d97706") : (theme === "dark" ? "#404040" : "#d4d4d4")}
+                      strokeWidth="2.5"
+                      pathLength="100"
+                      strokeDasharray="100"
+                      strokeDashoffset={100 - progress}
+                      className={intervalRunning ? "transition-all duration-1000 ease-linear" : "transition-none"}
+                      strokeLinecap="square"
+                    />
+                  </svg>
+                );
+              })()}
+
+              {/* 4 Hardware Corner Reticles / Precision Crosshairs */}
+              <div className={`absolute -top-2.5 -left-2.5 text-xs font-mono font-black select-none pointer-events-none z-20 transition-colors ${
+                theme === "dark" ? "text-neutral-600 group-hover:text-amber-500" : "text-neutral-400 group-hover:text-amber-600"
+              }`}>+</div>
+              <div className={`absolute -top-2.5 -right-2.5 text-xs font-mono font-black select-none pointer-events-none z-20 transition-colors ${
+                theme === "dark" ? "text-neutral-600 group-hover:text-amber-500" : "text-neutral-400 group-hover:text-amber-600"
+              }`}>+</div>
+              <div className={`absolute -bottom-2.5 -left-2.5 text-xs font-mono font-black select-none pointer-events-none z-20 transition-colors ${
+                theme === "dark" ? "text-neutral-600 group-hover:text-amber-500" : "text-neutral-400 group-hover:text-amber-600"
+              }`}>+</div>
+              <div className={`absolute -bottom-2.5 -right-2.5 text-xs font-mono font-black select-none pointer-events-none z-20 transition-colors ${
+                theme === "dark" ? "text-neutral-600 group-hover:text-amber-500" : "text-neutral-400 group-hover:text-amber-600"
+              }`}>+</div>
               
               {/* Presets */}
               <div className="flex items-center justify-center gap-2 flex-wrap">
