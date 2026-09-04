@@ -388,6 +388,51 @@ export default function ChronoWatchCockpit() {
                 {now ? now.toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "short", day: "numeric" }) : "---"}
               </div>
 
+              {/* Clean Sun Position & Day Progress Bar */}
+              {now && (() => {
+                const totalSecondsInDay = 86400;
+                const elapsedSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+                const dayProgress = (elapsedSeconds / totalSecondsInDay) * 100;
+                const hours = now.getHours() + now.getMinutes() / 60;
+                const isDaylight = hours >= 6 && hours < 18;
+
+                return (
+                  <div className="mt-6 pt-6 border-t border-dashed border-neutral-800/80 space-y-2.5 max-w-xl mx-auto">
+                    {/* Status Header */}
+                    <div className="flex items-center justify-between text-[10px] font-mono font-bold text-neutral-500 uppercase">
+                      <div className="flex items-center gap-1.5">
+                        {isDaylight ? (
+                          <Sun className="w-3.5 h-3.5 text-amber-500" />
+                        ) : (
+                          <Moon className="w-3.5 h-3.5 text-sky-400" />
+                        )}
+                        <span>{isDaylight ? "DAYLIGHT CYCLE" : "NOCTURNAL CYCLE"}</span>
+                      </div>
+                      <span className="text-neutral-300 font-black tracking-wider">
+                        {dayProgress.toFixed(1)}% <span className="text-neutral-500 font-normal">ELAPSED</span>
+                      </span>
+                    </div>
+
+                    {/* Progress Track */}
+                    <div className="relative h-1.5 w-full bg-neutral-900 border border-neutral-800 overflow-hidden">
+                      <div
+                        className="h-full bg-amber-500 transition-all duration-1000 ease-linear"
+                        style={{ width: `${dayProgress}%` }}
+                      />
+                    </div>
+
+                    {/* Scale Markings */}
+                    <div className="flex items-center justify-between text-[8px] font-mono text-neutral-600 uppercase tracking-wider">
+                      <span>00:00 MIDNIGHT</span>
+                      <span>06:00 DAWN</span>
+                      <span>12:00 NOON</span>
+                      <span>18:00 DUSK</span>
+                      <span>24:00 END</span>
+                    </div>
+                  </div>
+                );
+              })()}
+
             </div>
 
             {/* Collapsible Global Timezone Box */}
