@@ -359,18 +359,35 @@ export default function ChronoWatchCockpit() {
         {activeMode === "CLOCK" && (
           <div className="space-y-4 sm:space-y-6">
             
-            {/* Minimal & Sober Dashed Watch Box */}
-            <div className={`border-2 border-dashed p-8 sm:p-14 transition-all duration-300 relative ${
+            {/* Minimal & Sober Dashed Watch Box with Hardware Corner Reticles */}
+            <div className={`border-2 border-dashed p-8 sm:p-14 transition-all duration-300 relative group ${
               theme === "dark" 
-                ? "border-[#33322e] bg-[#161614] hover:border-neutral-400" 
-                : "border-neutral-400 bg-white shadow-sm hover:border-neutral-800"
+                ? "border-[#33322e] bg-[#161614] hover:border-neutral-400 lcd-matrix-dark" 
+                : "border-neutral-400 bg-white shadow-sm hover:border-neutral-800 lcd-matrix-light"
             }`}>
               
+              {/* 4 Hardware Corner Reticles / Precision Crosshairs */}
+              <div className={`absolute -top-2.5 -left-2.5 text-xs font-mono font-black select-none pointer-events-none transition-colors ${
+                theme === "dark" ? "text-neutral-600 group-hover:text-amber-500" : "text-neutral-400 group-hover:text-amber-600"
+              }`}>+</div>
+              <div className={`absolute -top-2.5 -right-2.5 text-xs font-mono font-black select-none pointer-events-none transition-colors ${
+                theme === "dark" ? "text-neutral-600 group-hover:text-amber-500" : "text-neutral-400 group-hover:text-amber-600"
+              }`}>+</div>
+              <div className={`absolute -bottom-2.5 -left-2.5 text-xs font-mono font-black select-none pointer-events-none transition-colors ${
+                theme === "dark" ? "text-neutral-600 group-hover:text-amber-500" : "text-neutral-400 group-hover:text-amber-600"
+              }`}>+</div>
+              <div className={`absolute -bottom-2.5 -right-2.5 text-xs font-mono font-black select-none pointer-events-none transition-colors ${
+                theme === "dark" ? "text-neutral-600 group-hover:text-amber-500" : "text-neutral-400 group-hover:text-amber-600"
+              }`}>+</div>
+
               {/* Header inside box */}
-              <div className={`flex items-center justify-between text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider mb-4 ${
+              <div className={`flex items-center justify-between text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider mb-3 ${
                 theme === "dark" ? "text-neutral-500" : "text-neutral-700"
               }`}>
-                <span>{now ? Intl.DateTimeFormat().resolvedOptions().timeZone : "LOCAL TIME"}</span>
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-amber-500 animate-pulse"></span>
+                  <span>{now ? Intl.DateTimeFormat().resolvedOptions().timeZone : "LOCAL TIME"}</span>
+                </div>
                 
                 {/* 12H / 24H Toggle */}
                 <button
@@ -385,7 +402,7 @@ export default function ChronoWatchCockpit() {
                 </button>
               </div>
 
-              {/* Primary Clock Digits */}
+              {/* Primary Clock Digits with Sub-pixel Kerning */}
               {now ? (() => {
                 let hours = now.getHours();
                 let ampm = "";
@@ -398,12 +415,12 @@ export default function ChronoWatchCockpit() {
                 const secStr = String(now.getSeconds()).padStart(2, "0");
 
                 return (
-                  <div className="font-mono text-6xl sm:text-8xl md:text-9xl font-black tracking-tight flex items-baseline justify-center gap-1 sm:gap-2 my-2 sm:my-4">
-                    <span className={theme === "dark" ? "text-neutral-100" : "text-neutral-950 font-black"}>{hrsStr}</span>
-                    <span className={theme === "dark" ? "text-neutral-600" : "text-neutral-400 font-bold"}>:</span>
-                    <span className={theme === "dark" ? "text-neutral-100" : "text-neutral-950 font-black"}>{minStr}</span>
-                    <span className={theme === "dark" ? "text-neutral-600" : "text-neutral-400 font-bold"}>:</span>
-                    <span className={theme === "dark" ? "text-neutral-100" : "text-neutral-950 font-black"}>{secStr}</span>
+                  <div className="font-mono text-6xl sm:text-8xl md:text-9xl font-black tracking-tighter flex items-baseline justify-center gap-1 sm:gap-2 my-1 sm:my-3">
+                    <span className={theme === "dark" ? "text-neutral-100 drop-shadow-sm" : "text-neutral-950 font-black"}>{hrsStr}</span>
+                    <span className={`animate-pulse ${theme === "dark" ? "text-neutral-600" : "text-neutral-400 font-bold"}`}>:</span>
+                    <span className={theme === "dark" ? "text-neutral-100 drop-shadow-sm" : "text-neutral-950 font-black"}>{minStr}</span>
+                    <span className={`animate-pulse ${theme === "dark" ? "text-neutral-600" : "text-neutral-400 font-bold"}`}>:</span>
+                    <span className={theme === "dark" ? "text-neutral-100 drop-shadow-sm" : "text-neutral-950 font-black"}>{secStr}</span>
                     {!is24Hour && (
                       <span className={`text-xs sm:text-lg font-black ml-2 ${theme === "dark" ? "text-neutral-500" : "text-neutral-700"}`}>{ampm}</span>
                     )}
@@ -413,9 +430,9 @@ export default function ChronoWatchCockpit() {
                 <div className={`text-4xl py-8 font-mono text-center ${theme === "dark" ? "text-neutral-600" : "text-neutral-400 font-bold"}`}>00:00:00</div>
               )}
 
-              {/* Sober Date Line */}
-              <div className={`text-center text-xs sm:text-sm font-mono font-bold uppercase tracking-widest mt-2 ${
-                theme === "dark" ? "text-neutral-500" : "text-neutral-700"
+              {/* Sober Date Line with Calibrated Spacing */}
+              <div className={`text-center text-xs sm:text-sm font-mono font-bold uppercase tracking-[0.25em] mt-1 ${
+                theme === "dark" ? "text-neutral-400" : "text-neutral-700"
               }`}>
                 {now ? now.toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "short", day: "numeric" }) : "---"}
               </div>
