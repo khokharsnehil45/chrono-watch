@@ -30,7 +30,7 @@ import {
   Compass
 } from "lucide-react";
 
-type Mode = "CLOCK" | "CHRONO" | "INTERVAL" | "METRONOME";
+type Mode = "CLOCK" | "CHRONO" | "INTERVAL";
 
 interface WorldZone {
   city: string;
@@ -113,12 +113,6 @@ export default function ChronoWatchCockpit() {
   const [intervalRemainingSec, setIntervalRemainingSec] = useState<number>(25 * 60);
   const [intervalRunning, setIntervalRunning] = useState<boolean>(false);
   const [intervalPreset, setIntervalPreset] = useState<"POMODORO" | "SHORT_BREAK" | "LONG_BREAK" | "SPRINT">("POMODORO");
-
-  // Metronome state
-  const [bpm, setBpm] = useState<number>(120);
-  const [beatsPerBar, setBeatsPerBar] = useState<number>(4);
-  const [currentBeat, setCurrentBeat] = useState<number>(0);
-  const [metronomeRunning, setMetronomeRunning] = useState<boolean>(false);
   const audioCtxRef = useRef<AudioContext | null>(null);
 
   // Fullscreen
@@ -222,27 +216,7 @@ export default function ChronoWatchCockpit() {
     playBeep(660);
   };
 
-  // Metronome Logic
-  useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-    if (metronomeRunning) {
-      const stepMs = (60 / bpm) * 1000;
-      interval = setInterval(() => {
-        setCurrentBeat((prev) => {
-          const next = (prev + 1) % beatsPerBar;
-          if (next === 0) {
-            playBeep(1320, 0.08); // Accent on Beat 1
-          } else {
-            playBeep(660, 0.04);
-          }
-          return next;
-        });
-      }, stepMs);
-    }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [metronomeRunning, bpm, beatsPerBar]);
+
 
   const formatStopwatch = (ms: number) => {
     const minutes = Math.floor(ms / 60000);
@@ -306,7 +280,7 @@ export default function ChronoWatchCockpit() {
         <div className={`hidden md:flex items-center gap-1 border p-0.5 ${
           theme === "dark" ? "border-neutral-700/60 bg-neutral-900/50" : "border-neutral-300 bg-neutral-100"
         }`}>
-          {(["CLOCK", "CHRONO", "INTERVAL", "METRONOME"] as Mode[]).map((m) => {
+          {(["CLOCK", "CHRONO", "INTERVAL"] as Mode[]).map((m) => {
             const isSel = activeMode === m;
             return (
               <button
@@ -363,7 +337,7 @@ export default function ChronoWatchCockpit() {
       <div className={`md:hidden flex items-center justify-around border-b p-1 text-xs ${
         theme === "dark" ? "border-[#383733] bg-[#141412]" : "border-neutral-300 bg-neutral-100"
       }`}>
-        {(["CLOCK", "CHRONO", "INTERVAL", "METRONOME"] as Mode[]).map((m) => (
+        {(["CLOCK", "CHRONO", "INTERVAL"] as Mode[]).map((m) => (
           <button
             key={m}
             onClick={() => { setActiveMode(m); playBeep(550); }}
@@ -1001,77 +975,7 @@ export default function ChronoWatchCockpit() {
           </div>
         )}
 
-        {/* 4. ACOUSTIC METRONOME MODE */}
-        {activeMode === "METRONOME" && (
-          <div className="space-y-4">
-            
-            <div className={`p-6 sm:p-10 border-2 ${
-              theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-[#d4d2c7] bg-white shadow-md"
-            } text-center space-y-6`}>
-              
-              <div className="text-[10px] uppercase font-bold text-amber-500">
-                PULSE BPM GENERATOR
-              </div>
 
-              {/* Large BPM Readout */}
-              <div className="font-mono text-6xl sm:text-9xl font-black my-2">
-                <span className={textPrimary}>{bpm}</span>
-                <span className="text-xs text-amber-500 ml-2">BPM</span>
-              </div>
-
-              {/* Visual Beat Indicators */}
-              <div className="flex items-center justify-center gap-3">
-                {Array.from({ length: beatsPerBar }).map((_, bIdx) => {
-                  const isActive = metronomeRunning && currentBeat === bIdx;
-                  return (
-                    <div
-                      key={bIdx}
-                      className={`w-8 h-8 sm:w-12 sm:h-12 border-2 flex items-center justify-center font-black text-xs sm:text-sm transition-all ${
-                        isActive
-                          ? bIdx === 0 ? "bg-amber-500 text-black border-amber-400 scale-110 shadow-lg shadow-amber-500/20" : "bg-white text-black border-white scale-105"
-                          : theme === "dark" ? "border-neutral-700 bg-neutral-900 text-neutral-600" : "border-neutral-300 bg-neutral-100 text-neutral-400"
-                      }`}
-                    >
-                      {bIdx + 1}
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Tempo Slider */}
-              <div className="max-w-md mx-auto space-y-2">
-                <input
-                  type="range"
-                  min={40}
-                  max={240}
-                  value={bpm}
-                  onChange={(e) => setBpm(Number(e.target.value))}
-                  className="w-full accent-amber-500"
-                />
-                <div className="flex items-center justify-between text-[10px] font-bold text-neutral-500">
-                  <span>40 GRAVE</span>
-                  <span>120 MODERATO</span>
-                  <span>240 PRESTISSIMO</span>
-                </div>
-              </div>
-
-              {/* Controls */}
-              <div className="flex items-center justify-center gap-3">
-                <button
-                  onClick={() => { setMetronomeRunning(!metronomeRunning); setCurrentBeat(0); }}
-                  className={`px-8 py-3 font-black text-sm uppercase transition cursor-pointer shadow flex items-center gap-2 ${
-                    metronomeRunning ? "bg-rose-500 hover:bg-rose-400 text-white" : "bg-amber-500 hover:bg-amber-400 text-black shadow-amber-500/20"
-                  }`}
-                >
-                  {metronomeRunning ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current" />}
-                  <span>{metronomeRunning ? "Stop Pulse" : "Start Pulse"}</span>
-                </button>
-              </div>
-
-            </div>
-
-          </div>
-        )}
 
       </main>
 
