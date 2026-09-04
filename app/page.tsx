@@ -895,8 +895,8 @@ export default function ChronoWatchCockpit() {
                       width="calc(100% - 2px)"
                       height="calc(100% - 2px)"
                       fill="none"
-                      stroke={chronoRunning ? (theme === "dark" ? "#f59e0b" : "#d97706") : (theme === "dark" ? "#404040" : "#d4d4d4")}
-                      strokeWidth="2.5"
+                      stroke={chronoRunning ? (theme === "dark" ? "#f59e0b" : "#b45309") : (theme === "dark" ? "#404040" : "#a3a3a3")}
+                      strokeWidth="3"
                       pathLength="100"
                       strokeDasharray="100"
                       strokeDashoffset={100 - minuteProgress}
@@ -1026,8 +1026,8 @@ export default function ChronoWatchCockpit() {
                       width="calc(100% - 2px)"
                       height="calc(100% - 2px)"
                       fill="none"
-                      stroke={intervalRunning ? (theme === "dark" ? "#f59e0b" : "#d97706") : (theme === "dark" ? "#404040" : "#d4d4d4")}
-                      strokeWidth="2.5"
+                      stroke={intervalRunning ? (theme === "dark" ? "#f59e0b" : "#b45309") : (theme === "dark" ? "#404040" : "#a3a3a3")}
+                      strokeWidth="3"
                       pathLength="100"
                       strokeDasharray="100"
                       strokeDashoffset={100 - progress}
