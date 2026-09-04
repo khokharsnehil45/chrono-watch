@@ -271,20 +271,20 @@ export default function ChronoWatchCockpit() {
     }
   };
 
-  const textPrimary = theme === "dark" ? "text-neutral-100" : "text-neutral-900";
-  const textSecondary = theme === "dark" ? "text-neutral-400" : "text-neutral-700";
-  const textMuted = theme === "dark" ? "text-neutral-500" : "text-neutral-600";
+  const textPrimary = theme === "dark" ? "text-neutral-100" : "text-neutral-950 font-black";
+  const textSecondary = theme === "dark" ? "text-neutral-400" : "text-neutral-800 font-semibold";
+  const textMuted = theme === "dark" ? "text-neutral-500" : "text-neutral-700 font-medium";
 
   const sw = formatStopwatch(chronoTimeMs);
 
   return (
     <div className={`min-h-screen flex flex-col font-mono select-none transition-colors duration-200 ${
-      theme === "dark" ? "bg-grid-pattern-dark text-[#ecebe6]" : "bg-grid-pattern-light text-[#111827]"
+      theme === "dark" ? "bg-grid-pattern-dark text-[#ecebe6]" : "bg-grid-pattern-light text-neutral-950 font-semibold"
     }`}>
       
       {/* Top Header */}
       <header className={`h-14 border-b px-3 sm:px-6 flex items-center justify-between z-30 ${
-        theme === "dark" ? "bg-[#181816]/95 border-[#383733]" : "bg-white/95 border-[#d4d2c7]"
+        theme === "dark" ? "bg-[#181816]/95 border-[#383733]" : "bg-white/95 border-neutral-300 shadow-xs"
       }`}>
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 bg-amber-500 text-black flex items-center justify-center font-black text-xs shadow">
@@ -294,7 +294,7 @@ export default function ChronoWatchCockpit() {
             <div className="flex items-center gap-1.5">
               <span className={`font-black text-xs sm:text-sm tracking-wider uppercase ${textPrimary}`}>CHRONO-WATCH</span>
               <span className={`text-[8px] sm:text-[9px] font-bold px-1.5 py-0.5 border ${
-                theme === "dark" ? "bg-[#262624] text-amber-400 border-amber-500/30" : "bg-amber-100 text-amber-800 border-amber-300"
+                theme === "dark" ? "bg-[#262624] text-amber-400 border-amber-500/30" : "bg-amber-100 text-amber-900 border-amber-400 font-black"
               }`}>
                 PRECISION CHRONOMETRY
               </span>
@@ -303,7 +303,9 @@ export default function ChronoWatchCockpit() {
         </div>
 
         {/* Mode Selector Tabs in Header */}
-        <div className="hidden md:flex items-center gap-1 border border-neutral-700/60 p-0.5">
+        <div className={`hidden md:flex items-center gap-1 border p-0.5 ${
+          theme === "dark" ? "border-neutral-700/60 bg-neutral-900/50" : "border-neutral-300 bg-neutral-100"
+        }`}>
           {(["CLOCK", "CHRONO", "INTERVAL", "METRONOME"] as Mode[]).map((m) => {
             const isSel = activeMode === m;
             return (
@@ -311,7 +313,9 @@ export default function ChronoWatchCockpit() {
                 key={m}
                 onClick={() => { setActiveMode(m); playBeep(550); }}
                 className={`px-3 py-1 text-xs font-black uppercase transition cursor-pointer ${
-                  isSel ? "bg-amber-500 text-black shadow-xs" : "text-neutral-400 hover:text-white"
+                  isSel
+                    ? "bg-amber-500 text-black shadow-xs font-black"
+                    : theme === "dark" ? "text-neutral-400 hover:text-white" : "text-neutral-700 hover:text-black hover:bg-white/80"
                 }`}
               >
                 {m}
@@ -320,15 +324,13 @@ export default function ChronoWatchCockpit() {
           })}
         </div>
 
-
-
         <div className="flex items-center gap-2">
           <button
             onClick={() => setSoundEnabled(!soundEnabled)}
             className={`p-2 border transition cursor-pointer ${
               soundEnabled
-                ? theme === "dark" ? "border-amber-500/40 bg-amber-500/10 text-amber-400" : "border-amber-300 bg-amber-100 text-amber-800"
-                : theme === "dark" ? "border-[#383733] text-neutral-500" : "border-neutral-300 text-neutral-400"
+                ? theme === "dark" ? "border-amber-500/40 bg-amber-500/10 text-amber-400" : "border-amber-400 bg-amber-100 text-amber-950 font-bold"
+                : theme === "dark" ? "border-[#383733] text-neutral-500" : "border-neutral-300 text-neutral-600 bg-white"
             }`}
             title="Toggle Sound"
           >
@@ -338,7 +340,7 @@ export default function ChronoWatchCockpit() {
           <button
             onClick={toggleFullscreen}
             className={`p-2 border transition cursor-pointer ${
-              theme === "dark" ? "border-[#383733] bg-[#1c1c1a] text-neutral-300" : "border-[#d4d2c7] bg-neutral-100 text-neutral-800"
+              theme === "dark" ? "border-[#383733] bg-[#1c1c1a] text-neutral-300" : "border-neutral-300 bg-white text-neutral-900 hover:bg-neutral-100"
             }`}
             title="Toggle Fullscreen"
           >
@@ -348,7 +350,7 @@ export default function ChronoWatchCockpit() {
           <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             className={`p-2 border transition cursor-pointer ${
-              theme === "dark" ? "border-[#383733] bg-[#1c1c1a] text-amber-400" : "border-[#d4d2c7] bg-neutral-100 text-neutral-900 hover:bg-neutral-200"
+              theme === "dark" ? "border-[#383733] bg-[#1c1c1a] text-amber-400" : "border-neutral-300 bg-white text-neutral-950 hover:bg-neutral-100 font-bold"
             }`}
             title="Toggle Theme"
           >
@@ -358,12 +360,18 @@ export default function ChronoWatchCockpit() {
       </header>
 
       {/* Mobile Mode Switcher */}
-      <div className="md:hidden flex items-center justify-around border-b border-[#383733] bg-[#141412] p-1 text-xs">
+      <div className={`md:hidden flex items-center justify-around border-b p-1 text-xs ${
+        theme === "dark" ? "border-[#383733] bg-[#141412]" : "border-neutral-300 bg-neutral-100"
+      }`}>
         {(["CLOCK", "CHRONO", "INTERVAL", "METRONOME"] as Mode[]).map((m) => (
           <button
             key={m}
             onClick={() => { setActiveMode(m); playBeep(550); }}
-            className={`py-1 px-2 font-black uppercase ${activeMode === m ? "bg-amber-500 text-black" : "text-neutral-400"}`}
+            className={`py-1 px-2 font-black uppercase ${
+              activeMode === m 
+                ? "bg-amber-500 text-black shadow-xs" 
+                : theme === "dark" ? "text-neutral-400" : "text-neutral-700"
+            }`}
           >
             {m}
           </button>
@@ -381,11 +389,13 @@ export default function ChronoWatchCockpit() {
             <div className={`border-2 border-dashed p-8 sm:p-14 transition-all duration-300 relative ${
               theme === "dark" 
                 ? "border-[#33322e] bg-[#161614] hover:border-neutral-400" 
-                : "border-[#d8d6cb] bg-[#faf9f5] hover:border-neutral-700"
+                : "border-neutral-400 bg-white shadow-sm hover:border-neutral-800"
             }`}>
               
               {/* Header inside box */}
-              <div className="flex items-center justify-between text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider text-neutral-500 mb-4">
+              <div className={`flex items-center justify-between text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider mb-4 ${
+                theme === "dark" ? "text-neutral-500" : "text-neutral-700"
+              }`}>
                 <span>{now ? Intl.DateTimeFormat().resolvedOptions().timeZone : "LOCAL TIME"}</span>
                 
                 {/* 12H / 24H Toggle */}
@@ -394,7 +404,7 @@ export default function ChronoWatchCockpit() {
                   className={`px-2 py-0.5 border text-[9px] font-mono font-bold uppercase transition cursor-pointer ${
                     theme === "dark" 
                       ? "border-neutral-700 bg-neutral-900 text-neutral-400 hover:text-white" 
-                      : "border-neutral-300 bg-white text-neutral-700 hover:text-black"
+                      : "border-neutral-400 bg-neutral-100 text-neutral-900 hover:bg-neutral-200 font-black"
                   }`}
                 >
                   {is24Hour ? "24H" : "12H"}
@@ -415,22 +425,24 @@ export default function ChronoWatchCockpit() {
 
                 return (
                   <div className="font-mono text-6xl sm:text-8xl md:text-9xl font-black tracking-tight flex items-baseline justify-center gap-1 sm:gap-2 my-2 sm:my-4">
-                    <span className={textPrimary}>{hrsStr}</span>
-                    <span className="text-neutral-500">:</span>
-                    <span className={textPrimary}>{minStr}</span>
-                    <span className="text-neutral-500">:</span>
-                    <span className={textPrimary}>{secStr}</span>
+                    <span className={theme === "dark" ? "text-neutral-100" : "text-neutral-950 font-black"}>{hrsStr}</span>
+                    <span className={theme === "dark" ? "text-neutral-600" : "text-neutral-400 font-bold"}>:</span>
+                    <span className={theme === "dark" ? "text-neutral-100" : "text-neutral-950 font-black"}>{minStr}</span>
+                    <span className={theme === "dark" ? "text-neutral-600" : "text-neutral-400 font-bold"}>:</span>
+                    <span className={theme === "dark" ? "text-neutral-100" : "text-neutral-950 font-black"}>{secStr}</span>
                     {!is24Hour && (
-                      <span className="text-xs sm:text-lg font-bold text-neutral-500 ml-2">{ampm}</span>
+                      <span className={`text-xs sm:text-lg font-black ml-2 ${theme === "dark" ? "text-neutral-500" : "text-neutral-700"}`}>{ampm}</span>
                     )}
                   </div>
                 );
               })() : (
-                <div className="text-4xl text-neutral-600 py-8 font-mono text-center">00:00:00</div>
+                <div className={`text-4xl py-8 font-mono text-center ${theme === "dark" ? "text-neutral-600" : "text-neutral-400 font-bold"}`}>00:00:00</div>
               )}
 
               {/* Sober Date Line */}
-              <div className="text-center text-xs sm:text-sm font-mono font-medium uppercase tracking-widest text-neutral-500 mt-2">
+              <div className={`text-center text-xs sm:text-sm font-mono font-bold uppercase tracking-widest mt-2 ${
+                theme === "dark" ? "text-neutral-500" : "text-neutral-700"
+              }`}>
                 {now ? now.toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "short", day: "numeric" }) : "---"}
               </div>
 
@@ -476,11 +488,15 @@ export default function ChronoWatchCockpit() {
                 }
 
                 return (
-                  <div className="mt-6 pt-6 border-t border-dashed border-neutral-800/80 space-y-3 max-w-xl mx-auto">
+                  <div className={`mt-6 pt-6 border-t border-dashed space-y-3 max-w-xl mx-auto ${
+                    theme === "dark" ? "border-neutral-800/80" : "border-neutral-300"
+                  }`}>
                     
                     {/* View Switcher Tabs (Day / Month / Year) */}
                     <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-1 border border-neutral-800 p-0.5 bg-neutral-900/50">
+                      <div className={`flex items-center gap-1 border p-0.5 ${
+                        theme === "dark" ? "border-neutral-800 bg-neutral-900/50" : "border-neutral-300 bg-neutral-100"
+                      }`}>
                         {(["DAY", "MONTH", "YEAR"] as const).map((view) => {
                           const isSel = telemetryView === view;
                           return (
@@ -489,8 +505,8 @@ export default function ChronoWatchCockpit() {
                               onClick={() => { setTelemetryView(view); playBeep(700, 0.02); }}
                               className={`px-2 py-0.5 text-[9px] font-mono font-bold uppercase transition cursor-pointer ${
                                 isSel
-                                  ? "bg-amber-500 text-black shadow-xs"
-                                  : "text-neutral-500 hover:text-neutral-300"
+                                  ? "bg-amber-500 text-black shadow-xs font-black"
+                                  : theme === "dark" ? "text-neutral-500 hover:text-neutral-300" : "text-neutral-700 hover:text-black"
                               }`}
                             >
                               {view}
@@ -500,26 +516,32 @@ export default function ChronoWatchCockpit() {
                       </div>
 
                       {/* Right Telemetry Readout */}
-                      <span className="text-[10px] font-mono text-neutral-300 font-black tracking-wider">
-                        {activePercentage.toFixed(1)}% <span className="text-neutral-500 font-normal">ELAPSED</span>
+                      <span className={`text-[10px] font-mono font-black tracking-wider ${
+                        theme === "dark" ? "text-neutral-300" : "text-neutral-950"
+                      }`}>
+                        {activePercentage.toFixed(1)}% <span className={theme === "dark" ? "text-neutral-500 font-normal" : "text-neutral-600 font-normal"}>ELAPSED</span>
                       </span>
                     </div>
 
                     {/* Status Header */}
-                    <div className="flex items-center justify-between text-[10px] font-mono font-bold text-neutral-500 uppercase">
+                    <div className={`flex items-center justify-between text-[10px] font-mono font-bold uppercase ${
+                      theme === "dark" ? "text-neutral-500" : "text-neutral-700"
+                    }`}>
                       <div className="flex items-center gap-1.5">
                         {telemetryView === "DAY" ? (
-                          isDaylight ? <Sun className="w-3.5 h-3.5 text-amber-500" /> : <Moon className="w-3.5 h-3.5 text-sky-400" />
+                          isDaylight ? <Sun className="w-3.5 h-3.5 text-amber-500" /> : <Moon className="w-3.5 h-3.5 text-sky-500" />
                         ) : (
                           <Calendar className="w-3.5 h-3.5 text-amber-500" />
                         )}
-                        <span>{activeTitle}</span>
+                        <span className={theme === "dark" ? "text-neutral-400" : "text-neutral-900 font-bold"}>{activeTitle}</span>
                       </div>
-                      <span className="text-neutral-400 font-mono text-[9px]">{activeSubtitle}</span>
+                      <span className={`font-mono text-[9px] font-semibold ${theme === "dark" ? "text-neutral-400" : "text-neutral-700"}`}>{activeSubtitle}</span>
                     </div>
 
                     {/* Progress Track */}
-                    <div className="relative h-1.5 w-full bg-neutral-900 border border-neutral-800 overflow-hidden">
+                    <div className={`relative h-2 w-full border overflow-hidden ${
+                      theme === "dark" ? "bg-neutral-900 border-neutral-800" : "bg-neutral-200 border-neutral-300"
+                    }`}>
                       <div
                         className="h-full bg-amber-500 transition-all duration-1000 ease-linear"
                         style={{ width: `${activePercentage}%` }}
@@ -527,7 +549,9 @@ export default function ChronoWatchCockpit() {
                     </div>
 
                     {/* Scale Markings depending on active view */}
-                    <div className="flex items-center justify-between text-[8px] font-mono text-neutral-600 uppercase tracking-wider">
+                    <div className={`flex items-center justify-between text-[8px] font-mono uppercase tracking-wider font-semibold ${
+                      theme === "dark" ? "text-neutral-600" : "text-neutral-600"
+                    }`}>
                       {telemetryView === "DAY" && (
                         <>
                           <span>00:00 MIDNIGHT</span>
@@ -564,7 +588,7 @@ export default function ChronoWatchCockpit() {
 
             {/* Collapsible Global Timezone Box */}
             <div className={`border transition-all duration-200 ${
-              theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-[#d4d2c7] bg-white shadow-xs"
+              theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-neutral-300 bg-white shadow-xs"
             }`}>
               {/* Clickable Header Button */}
               <button
@@ -578,7 +602,7 @@ export default function ChronoWatchCockpit() {
               >
                 <div className="flex items-center gap-2.5">
                   <div className={`p-1 border ${
-                    theme === "dark" ? "border-amber-500/30 bg-amber-500/10 text-amber-400" : "border-amber-300 bg-amber-100 text-amber-800"
+                    theme === "dark" ? "border-amber-500/30 bg-amber-500/10 text-amber-400" : "border-amber-400 bg-amber-100 text-amber-950 font-bold"
                   }`}>
                     <Globe className="w-4 h-4" />
                   </div>
@@ -586,7 +610,7 @@ export default function ChronoWatchCockpit() {
                     <div className={`text-xs font-black uppercase tracking-wider ${textPrimary}`}>
                       GLOBAL TIMEZONE MATRIX
                     </div>
-                    <div className="text-[10px] text-neutral-500 font-mono">
+                    <div className={`text-[10px] font-mono ${theme === "dark" ? "text-neutral-500" : "text-neutral-600 font-semibold"}`}>
                       {showWorldClock ? "8 WORLD CITIES ACTIVE" : "CLICK TO EXPAND 8 WORLD CITIES"}
                     </div>
                   </div>
@@ -595,22 +619,22 @@ export default function ChronoWatchCockpit() {
                 <div className="flex items-center gap-2">
                   <span className={`text-[9px] font-mono font-bold px-2 py-0.5 border ${
                     showWorldClock
-                      ? theme === "dark" ? "border-amber-500/40 bg-amber-500/10 text-amber-300" : "border-amber-400 bg-amber-100 text-amber-900"
-                      : theme === "dark" ? "border-neutral-800 text-neutral-500" : "border-neutral-200 text-neutral-600"
+                      ? theme === "dark" ? "border-amber-500/40 bg-amber-500/10 text-amber-300" : "border-amber-400 bg-amber-100 text-amber-950 font-black"
+                      : theme === "dark" ? "border-neutral-800 text-neutral-500" : "border-neutral-300 text-neutral-800 font-bold bg-neutral-100"
                   }`}>
                     {showWorldClock ? "OPEN" : "COLLAPSED"}
                   </span>
                   {showWorldClock ? (
-                    <ChevronUp className="w-4 h-4 text-neutral-400" />
+                    <ChevronUp className={`w-4 h-4 ${theme === "dark" ? "text-neutral-400" : "text-neutral-700"}`} />
                   ) : (
-                    <ChevronDown className="w-4 h-4 text-neutral-400" />
+                    <ChevronDown className={`w-4 h-4 ${theme === "dark" ? "text-neutral-400" : "text-neutral-700"}`} />
                   )}
                 </div>
               </button>
 
               {/* Collapsible Content */}
               {showWorldClock && (
-                <div className={`p-4 border-t ${theme === "dark" ? "border-[#2c2b28] bg-[#141412]" : "border-[#e5e3d8] bg-[#fcfbf9]"} space-y-4`}>
+                <div className={`p-4 border-t ${theme === "dark" ? "border-[#2c2b28] bg-[#141412]" : "border-neutral-200 bg-neutral-50/80"} space-y-4`}>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
                     {DEFAULT_ZONES.map((zone) => {
                       let timeStr = "--:--:--";
@@ -634,32 +658,36 @@ export default function ChronoWatchCockpit() {
                           key={zone.code}
                           className={`p-3 border transition-colors ${
                             isWorkHours
-                              ? theme === "dark" ? "border-emerald-500/40 bg-emerald-500/[0.04]" : "border-emerald-400 bg-emerald-50/50"
+                              ? theme === "dark" ? "border-emerald-500/40 bg-emerald-500/[0.04]" : "border-emerald-500/60 bg-emerald-50 shadow-xs"
                               : isNight
-                                ? theme === "dark" ? "border-[#242420] bg-[#10100e]" : "border-neutral-200 bg-neutral-100"
-                                : theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-[#d4d2c7] bg-white"
+                                ? theme === "dark" ? "border-[#242420] bg-[#10100e]" : "border-neutral-300 bg-white"
+                                : theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-neutral-300 bg-white shadow-xs"
                           } space-y-1.5`}
                         >
-                          <div className="flex items-center justify-between text-[9px] font-bold text-neutral-500 uppercase">
+                          <div className={`flex items-center justify-between text-[9px] font-bold uppercase ${
+                            theme === "dark" ? "text-neutral-500" : "text-neutral-700 font-black"
+                          }`}>
                             <span className="truncate">{zone.city}</span>
                             <span className={`text-[8px] px-1 py-0.2 border ${
                               isWorkHours
-                                ? "border-emerald-500/50 text-emerald-400 bg-emerald-500/10"
+                                ? "border-emerald-500/50 text-emerald-600 bg-emerald-100 font-black"
                                 : isNight
-                                  ? "border-neutral-700 text-neutral-500"
-                                  : "border-amber-500/40 text-amber-400"
+                                  ? theme === "dark" ? "border-neutral-700 text-neutral-500" : "border-neutral-300 text-neutral-600 bg-neutral-100 font-bold"
+                                  : theme === "dark" ? "border-amber-500/40 text-amber-400" : "border-amber-400 text-amber-900 bg-amber-100 font-bold"
                             }`}>
                               {isWorkHours ? "WORK" : isNight ? "NIGHT" : "OFF"}
                             </span>
                           </div>
                           
-                          <div className={`text-lg sm:text-xl font-black font-mono ${textPrimary}`}>
+                          <div className={`text-lg sm:text-xl font-black font-mono ${theme === "dark" ? "text-neutral-100" : "text-neutral-950 font-black"}`}>
                             {timeStr}
                           </div>
 
-                          <div className="flex items-center justify-between text-[10px] text-neutral-500 font-medium">
+                          <div className={`flex items-center justify-between text-[10px] font-bold ${
+                            theme === "dark" ? "text-neutral-500" : "text-neutral-700"
+                          }`}>
                             <span>{dateStr}</span>
-                            <span className="text-amber-500">[{zone.code}]</span>
+                            <span className={theme === "dark" ? "text-amber-500" : "text-amber-700 font-black"}>[{zone.code}]</span>
                           </div>
                         </div>
                       );
@@ -671,7 +699,7 @@ export default function ChronoWatchCockpit() {
 
             {/* Collapsible Moon Phase & Astronomy Matrix Box */}
             <div className={`border transition-all duration-200 ${
-              theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-[#d4d2c7] bg-white shadow-xs"
+              theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-neutral-300 bg-white shadow-xs"
             }`}>
               {/* Clickable Header Button */}
               <button
@@ -685,7 +713,7 @@ export default function ChronoWatchCockpit() {
               >
                 <div className="flex items-center gap-2.5">
                   <div className={`p-1 border ${
-                    theme === "dark" ? "border-amber-500/30 bg-amber-500/10 text-amber-400" : "border-amber-300 bg-amber-100 text-amber-800"
+                    theme === "dark" ? "border-amber-500/30 bg-amber-500/10 text-amber-400" : "border-amber-400 bg-amber-100 text-amber-950 font-bold"
                   }`}>
                     <Compass className="w-4 h-4" />
                   </div>
@@ -693,7 +721,7 @@ export default function ChronoWatchCockpit() {
                     <div className={`text-xs font-black uppercase tracking-wider ${textPrimary}`}>
                       LUNAR PHASE & ASTRONOMY MATRIX
                     </div>
-                    <div className="text-[10px] text-neutral-500 font-mono">
+                    <div className={`text-[10px] font-mono ${theme === "dark" ? "text-neutral-500" : "text-neutral-600 font-semibold"}`}>
                       {now ? `${getMoonPhase(now).phaseName} • ${(getMoonPhase(now).fraction * 100).toFixed(0)}% ILLUMINATION` : "ASTRONOMICAL TELEMETRY"}
                     </div>
                   </div>
@@ -702,15 +730,15 @@ export default function ChronoWatchCockpit() {
                 <div className="flex items-center gap-2">
                   <span className={`text-[9px] font-mono font-bold px-2 py-0.5 border ${
                     showAstronomy
-                      ? theme === "dark" ? "border-amber-500/40 bg-amber-500/10 text-amber-300" : "border-amber-400 bg-amber-100 text-amber-900"
-                      : theme === "dark" ? "border-neutral-800 text-neutral-500" : "border-neutral-200 text-neutral-600"
+                      ? theme === "dark" ? "border-amber-500/40 bg-amber-500/10 text-amber-300" : "border-amber-400 bg-amber-100 text-amber-950 font-black"
+                      : theme === "dark" ? "border-neutral-800 text-neutral-500" : "border-neutral-300 text-neutral-800 font-bold bg-neutral-100"
                   }`}>
                     {showAstronomy ? "OPEN" : "COLLAPSED"}
                   </span>
                   {showAstronomy ? (
-                    <ChevronUp className="w-4 h-4 text-neutral-400" />
+                    <ChevronUp className={`w-4 h-4 ${theme === "dark" ? "text-neutral-400" : "text-neutral-700"}`} />
                   ) : (
-                    <ChevronDown className="w-4 h-4 text-neutral-400" />
+                    <ChevronDown className={`w-4 h-4 ${theme === "dark" ? "text-neutral-400" : "text-neutral-700"}`} />
                   )}
                 </div>
               </button>
@@ -730,46 +758,48 @@ export default function ChronoWatchCockpit() {
                 ];
 
                 return (
-                  <div className={`p-4 border-t ${theme === "dark" ? "border-[#2c2b28] bg-[#141412]" : "border-[#e5e3d8] bg-[#fcfbf9]"} space-y-4`}>
+                  <div className={`p-4 border-t ${theme === "dark" ? "border-[#2c2b28] bg-[#141412]" : "border-neutral-200 bg-neutral-50/80"} space-y-4`}>
                     
                     {/* Primary Lunar Telemetry Bar */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-                      <div className={`p-3 border ${theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-[#d4d2c7] bg-white"} space-y-1`}>
-                        <div className="text-[9px] font-bold text-neutral-500 uppercase">CURRENT PHASE</div>
+                      <div className={`p-3 border ${theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-neutral-300 bg-white shadow-xs"} space-y-1`}>
+                        <div className={`text-[9px] font-bold uppercase ${theme === "dark" ? "text-neutral-500" : "text-neutral-700 font-bold"}`}>CURRENT PHASE</div>
                         <div className="flex items-center gap-2">
                           <span className="text-xl">{moon.symbol}</span>
-                          <span className={`text-xs font-black font-mono ${textPrimary}`}>{moon.phaseName}</span>
+                          <span className={`text-xs font-black font-mono ${theme === "dark" ? "text-neutral-100" : "text-neutral-950 font-black"}`}>{moon.phaseName}</span>
                         </div>
                       </div>
 
-                      <div className={`p-3 border ${theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-[#d4d2c7] bg-white"} space-y-1`}>
-                        <div className="text-[9px] font-bold text-neutral-500 uppercase">ILLUMINATION</div>
-                        <div className={`text-lg font-black font-mono text-amber-500`}>
+                      <div className={`p-3 border ${theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-neutral-300 bg-white shadow-xs"} space-y-1`}>
+                        <div className={`text-[9px] font-bold uppercase ${theme === "dark" ? "text-neutral-500" : "text-neutral-700 font-bold"}`}>ILLUMINATION</div>
+                        <div className={`text-lg font-black font-mono ${theme === "dark" ? "text-amber-500" : "text-amber-700"}`}>
                           {(moon.fraction * 100).toFixed(1)}%
                         </div>
-                        <div className="text-[9px] text-neutral-500">SURFACE REFLECTIVITY</div>
+                        <div className={`text-[9px] font-medium ${theme === "dark" ? "text-neutral-500" : "text-neutral-600"}`}>SURFACE REFLECTIVITY</div>
                       </div>
 
-                      <div className={`p-3 border ${theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-[#d4d2c7] bg-white"} space-y-1`}>
-                        <div className="text-[9px] font-bold text-neutral-500 uppercase">LUNAR AGE</div>
-                        <div className={`text-lg font-black font-mono ${textPrimary}`}>
-                          {moon.ageDays} <span className="text-xs text-neutral-500 font-normal">DAYS</span>
+                      <div className={`p-3 border ${theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-neutral-300 bg-white shadow-xs"} space-y-1`}>
+                        <div className={`text-[9px] font-bold uppercase ${theme === "dark" ? "text-neutral-500" : "text-neutral-700 font-bold"}`}>LUNAR AGE</div>
+                        <div className={`text-lg font-black font-mono ${theme === "dark" ? "text-neutral-100" : "text-neutral-950 font-black"}`}>
+                          {moon.ageDays} <span className={`text-xs font-normal ${theme === "dark" ? "text-neutral-500" : "text-neutral-600"}`}>DAYS</span>
                         </div>
-                        <div className="text-[9px] text-neutral-500">IN 29.53d SYNODIC CYCLE</div>
+                        <div className={`text-[9px] font-medium ${theme === "dark" ? "text-neutral-500" : "text-neutral-600"}`}>IN 29.53d SYNODIC CYCLE</div>
                       </div>
 
-                      <div className={`p-3 border ${theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-[#d4d2c7] bg-white"} space-y-1`}>
-                        <div className="text-[9px] font-bold text-neutral-500 uppercase">NEXT FULL MOON</div>
-                        <div className={`text-lg font-black font-mono ${textPrimary}`}>
-                          {moon.ageDays < 14.8 ? (14.8 - moon.ageDays).toFixed(1) : (29.53 - moon.ageDays + 14.8).toFixed(1)} <span className="text-xs text-neutral-500 font-normal">DAYS</span>
+                      <div className={`p-3 border ${theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-neutral-300 bg-white shadow-xs"} space-y-1`}>
+                        <div className={`text-[9px] font-bold uppercase ${theme === "dark" ? "text-neutral-500" : "text-neutral-700 font-bold"}`}>NEXT FULL MOON</div>
+                        <div className={`text-lg font-black font-mono ${theme === "dark" ? "text-neutral-100" : "text-neutral-950 font-black"}`}>
+                          {moon.ageDays < 14.8 ? (14.8 - moon.ageDays).toFixed(1) : (29.53 - moon.ageDays + 14.8).toFixed(1)} <span className={`text-xs font-normal ${theme === "dark" ? "text-neutral-500" : "text-neutral-600"}`}>DAYS</span>
                         </div>
-                        <div className="text-[9px] text-neutral-500">PEAK ILLUMINATION</div>
+                        <div className={`text-[9px] font-medium ${theme === "dark" ? "text-neutral-500" : "text-neutral-600"}`}>PEAK ILLUMINATION</div>
                       </div>
                     </div>
 
                     {/* 8-Phase Visual Track */}
                     <div className="space-y-2">
-                      <div className="text-[9px] font-mono font-bold text-neutral-500 uppercase tracking-wider">
+                      <div className={`text-[9px] font-mono font-bold uppercase tracking-wider ${
+                        theme === "dark" ? "text-neutral-500" : "text-neutral-700"
+                      }`}>
                         29.5-DAY SYNODIC PHASE PROGRESSION
                       </div>
 
@@ -781,12 +811,16 @@ export default function ChronoWatchCockpit() {
                               key={p.name}
                               className={`p-2 border text-center transition-colors ${
                                 isActive
-                                  ? theme === "dark" ? "border-amber-500 bg-amber-500/10 shadow-xs shadow-amber-500/20" : "border-amber-500 bg-amber-100"
-                                  : theme === "dark" ? "border-neutral-800 bg-neutral-900/50 opacity-60" : "border-neutral-200 bg-white opacity-70"
+                                  ? theme === "dark" ? "border-amber-500 bg-amber-500/10 shadow-xs shadow-amber-500/20" : "border-amber-500 bg-amber-100 font-black shadow-xs"
+                                  : theme === "dark" ? "border-neutral-800 bg-neutral-900/50 opacity-60" : "border-neutral-300 bg-white opacity-80"
                               }`}
                             >
                               <div className="text-base my-0.5">{p.symbol}</div>
-                              <div className={`text-[7px] font-mono font-bold truncate ${isActive ? "text-amber-400" : "text-neutral-500"}`}>
+                              <div className={`text-[7px] font-mono font-bold truncate ${
+                                isActive 
+                                  ? theme === "dark" ? "text-amber-400" : "text-amber-950 font-black" 
+                                  : theme === "dark" ? "text-neutral-500" : "text-neutral-700 font-bold"
+                              }`}>
                                 {p.name}
                               </div>
                               {isActive && (
