@@ -22,10 +22,11 @@ import {
   Layers,
   Sparkles,
   Zap,
-  Flame,
   CheckCircle2,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Calendar,
+  BarChart3
 } from "lucide-react";
 
 type Mode = "CLOCK" | "CHRONO" | "INTERVAL" | "METRONOME";
@@ -54,6 +55,7 @@ export default function ChronoWatchCockpit() {
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [is24Hour, setIs24Hour] = useState<boolean>(true);
   const [showWorldClock, setShowWorldClock] = useState<boolean>(false);
+  const [telemetryView, setTelemetryView] = useState<"DAY" | "MONTH" | "YEAR">("DAY");
 
   // Stopwatch state
   const [chronoRunning, setChronoRunning] = useState<boolean>(false);
@@ -388,46 +390,127 @@ export default function ChronoWatchCockpit() {
                 {now ? now.toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "short", day: "numeric" }) : "---"}
               </div>
 
-              {/* Clean Sun Position & Day Progress Bar */}
+              {/* Calendar Telemetry: Day / Month / Year Progress */}
               {now && (() => {
+                const year = now.getFullYear();
+                const month = now.getMonth(); // 0-indexed
+                const date = now.getDate();
+                
+                // 1. Day Progress
                 const totalSecondsInDay = 86400;
                 const elapsedSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
                 const dayProgress = (elapsedSeconds / totalSecondsInDay) * 100;
                 const hours = now.getHours() + now.getMinutes() / 60;
                 const isDaylight = hours >= 6 && hours < 18;
 
+                // 2. Month Progress
+                const daysInCurrentMonth = new Date(year, month + 1, 0).getDate();
+                const monthElapsedDays = (date - 1) + (elapsedSeconds / totalSecondsInDay);
+                const monthProgress = (monthElapsedDays / daysInCurrentMonth) * 100;
+
+                // 3. Year Progress & Day-of-Year
+                const startOfYear = new Date(year, 0, 1);
+                const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+                const totalDaysInYear = isLeapYear ? 366 : 365;
+                const diffTime = now.getTime() - startOfYear.getTime();
+                const dayOfYear = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                const yearProgress = (diffTime / (totalDaysInYear * 24 * 3600 * 1000)) * 100;
+                const quarter = Math.floor(month / 3) + 1;
+
+                let activePercentage = dayProgress;
+                let activeTitle = isDaylight ? "DAYLIGHT CYCLE" : "NOCTURNAL CYCLE";
+                let activeSubtitle = `${hours.toFixed(1)}h / 24.0h`;
+
+                if (telemetryView === "MONTH") {
+                  activePercentage = monthProgress;
+                  activeTitle = `${now.toLocaleDateString(undefined, { month: "long" }).toUpperCase()} PROGRESS`;
+                  activeSubtitle = `DAY ${date} OF ${daysInCurrentMonth}`;
+                } else if (telemetryView === "YEAR") {
+                  activePercentage = yearProgress;
+                  activeTitle = `YEAR ${year} • Q${quarter}`;
+                  activeSubtitle = `DAY ${dayOfYear} OF ${totalDaysInYear}`;
+                }
+
                 return (
-                  <div className="mt-6 pt-6 border-t border-dashed border-neutral-800/80 space-y-2.5 max-w-xl mx-auto">
+                  <div className="mt-6 pt-6 border-t border-dashed border-neutral-800/80 space-y-3 max-w-xl mx-auto">
+                    
+                    {/* View Switcher Tabs (Day / Month / Year) */}
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-1 border border-neutral-800 p-0.5 bg-neutral-900/50">
+                        {(["DAY", "MONTH", "YEAR"] as const).map((view) => {
+                          const isSel = telemetryView === view;
+                          return (
+                            <button
+                              key={view}
+                              onClick={() => { setTelemetryView(view); playBeep(700, 0.02); }}
+                              className={`px-2 py-0.5 text-[9px] font-mono font-bold uppercase transition cursor-pointer ${
+                                isSel
+                                  ? "bg-amber-500 text-black shadow-xs"
+                                  : "text-neutral-500 hover:text-neutral-300"
+                              }`}
+                            >
+                              {view}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {/* Right Telemetry Readout */}
+                      <span className="text-[10px] font-mono text-neutral-300 font-black tracking-wider">
+                        {activePercentage.toFixed(1)}% <span className="text-neutral-500 font-normal">ELAPSED</span>
+                      </span>
+                    </div>
+
                     {/* Status Header */}
                     <div className="flex items-center justify-between text-[10px] font-mono font-bold text-neutral-500 uppercase">
                       <div className="flex items-center gap-1.5">
-                        {isDaylight ? (
-                          <Sun className="w-3.5 h-3.5 text-amber-500" />
+                        {telemetryView === "DAY" ? (
+                          isDaylight ? <Sun className="w-3.5 h-3.5 text-amber-500" /> : <Moon className="w-3.5 h-3.5 text-sky-400" />
                         ) : (
-                          <Moon className="w-3.5 h-3.5 text-sky-400" />
+                          <Calendar className="w-3.5 h-3.5 text-amber-500" />
                         )}
-                        <span>{isDaylight ? "DAYLIGHT CYCLE" : "NOCTURNAL CYCLE"}</span>
+                        <span>{activeTitle}</span>
                       </div>
-                      <span className="text-neutral-300 font-black tracking-wider">
-                        {dayProgress.toFixed(1)}% <span className="text-neutral-500 font-normal">ELAPSED</span>
-                      </span>
+                      <span className="text-neutral-400 font-mono text-[9px]">{activeSubtitle}</span>
                     </div>
 
                     {/* Progress Track */}
                     <div className="relative h-1.5 w-full bg-neutral-900 border border-neutral-800 overflow-hidden">
                       <div
                         className="h-full bg-amber-500 transition-all duration-1000 ease-linear"
-                        style={{ width: `${dayProgress}%` }}
+                        style={{ width: `${activePercentage}%` }}
                       />
                     </div>
 
-                    {/* Scale Markings */}
+                    {/* Scale Markings depending on active view */}
                     <div className="flex items-center justify-between text-[8px] font-mono text-neutral-600 uppercase tracking-wider">
-                      <span>00:00 MIDNIGHT</span>
-                      <span>06:00 DAWN</span>
-                      <span>12:00 NOON</span>
-                      <span>18:00 DUSK</span>
-                      <span>24:00 END</span>
+                      {telemetryView === "DAY" && (
+                        <>
+                          <span>00:00 MIDNIGHT</span>
+                          <span>06:00 DAWN</span>
+                          <span>12:00 NOON</span>
+                          <span>18:00 DUSK</span>
+                          <span>24:00 END</span>
+                        </>
+                      )}
+                      {telemetryView === "MONTH" && (
+                        <>
+                          <span>DAY 1</span>
+                          <span>WEEK 1</span>
+                          <span>MID-MONTH</span>
+                          <span>WEEK 3</span>
+                          <span>DAY {daysInCurrentMonth}</span>
+                        </>
+                      )}
+                      {telemetryView === "YEAR" && (
+                        <>
+                          <span>JAN (Q1)</span>
+                          <span>APR (Q2)</span>
+                          <span>JUL (Q3)</span>
+                          <span>OCT (Q4)</span>
+                          <span>DEC (END)</span>
+                        </>
+                      )}
                     </div>
                   </div>
                 );
