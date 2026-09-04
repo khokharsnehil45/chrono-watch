@@ -45,63 +45,12 @@ const DEFAULT_ZONES: WorldZone[] = [
   { city: "BERLIN", tz: "Europe/Berlin", code: "CEST" },
 ];
 
-export type ColorSkin = "AMBER" | "MATRIX" | "AVIATION" | "NIGHT_RED";
-
-export const SKIN_CONFIG: Record<ColorSkin, {
-  name: string;
-  badge: string;
-  primaryHex: string;
-  accentClass: string;
-  borderHover: string;
-  textAccent: string;
-  bgAccent: string;
-}> = {
-  AMBER: {
-    name: "SWISS AMBER",
-    badge: "PRECISION",
-    primaryHex: "#ffb703",
-    accentClass: "text-amber-500",
-    borderHover: "hover:border-amber-500",
-    textAccent: "text-amber-400",
-    bgAccent: "bg-amber-500",
-  },
-  MATRIX: {
-    name: "RADAR GREEN",
-    badge: "CRT PHOSPHOR",
-    primaryHex: "#10b981",
-    accentClass: "text-emerald-500",
-    borderHover: "hover:border-emerald-500",
-    textAccent: "text-emerald-400",
-    bgAccent: "bg-emerald-500",
-  },
-  AVIATION: {
-    name: "COBALT SKY",
-    badge: "AVIONICS",
-    primaryHex: "#0284c7",
-    accentClass: "text-sky-500",
-    borderHover: "hover:border-sky-500",
-    textAccent: "text-sky-400",
-    bgAccent: "bg-sky-500",
-  },
-  NIGHT_RED: {
-    name: "MILITARY RED",
-    badge: "DARKROOM",
-    primaryHex: "#ef4444",
-    accentClass: "text-rose-500",
-    borderHover: "hover:border-rose-500",
-    textAccent: "text-rose-400",
-    bgAccent: "bg-rose-500",
-  },
-};
-
 export default function ChronoWatchCockpit() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const [skin, setSkin] = useState<ColorSkin>("AMBER");
   const [activeMode, setActiveMode] = useState<Mode>("CLOCK");
   const [now, setNow] = useState<Date | null>(null);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [is24Hour, setIs24Hour] = useState<boolean>(true);
-  const [tzOffsetHours, setTzOffsetHours] = useState<number>(0);
 
   // Stopwatch state
   const [chronoRunning, setChronoRunning] = useState<boolean>(false);
@@ -322,26 +271,7 @@ export default function ChronoWatchCockpit() {
           })}
         </div>
 
-        {/* Color Palette Skin Selector */}
-        <div className="flex items-center gap-1 border border-neutral-700/60 p-0.5">
-          {(["AMBER", "MATRIX", "AVIATION", "NIGHT_RED"] as ColorSkin[]).map((s) => {
-            const cfg = SKIN_CONFIG[s];
-            const isSel = skin === s;
-            return (
-              <button
-                key={s}
-                onClick={() => { setSkin(s); playBeep(700); }}
-                className={`px-2 py-1 text-[9px] font-black uppercase transition cursor-pointer flex items-center gap-1 ${
-                  isSel ? `${cfg.bgAccent} text-black font-black shadow-xs` : "text-neutral-400 hover:text-white"
-                }`}
-                title={cfg.name}
-              >
-                <span className="w-1.5 h-1.5" style={{ backgroundColor: cfg.primaryHex }}></span>
-                <span className="hidden lg:inline">{cfg.badge}</span>
-              </button>
-            );
-          })}
-        </div>
+
 
         <div className="flex items-center gap-2">
           <button
@@ -457,57 +387,16 @@ export default function ChronoWatchCockpit() {
 
             </div>
 
-            {/* Multi-Timezone Radar Grid & Time-Travel Slider */}
+            {/* Multi-Timezone Radar Grid */}
             <div className={`p-4 border ${theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-[#d4d2c7] bg-white shadow-xs"} space-y-4`}>
               
-              {/* Header with Offset Readout */}
-              <div className="flex items-center justify-between flex-wrap gap-2">
+              {/* Header */}
+              <div className="flex items-center justify-between">
                 <div className={`text-xs font-black uppercase flex items-center gap-1.5 ${textPrimary}`}>
-                  <Globe className={`w-3.5 h-3.5 ${SKIN_CONFIG[skin].accentClass}`} />
+                  <Globe className="w-3.5 h-3.5 text-amber-500" />
                   GLOBAL TIMEZONE RADAR MATRIX
                 </div>
-
-                <div className="flex items-center gap-2">
-                  {tzOffsetHours !== 0 && (
-                    <span className={`text-[10px] font-mono font-bold px-2 py-0.5 border ${
-                      theme === "dark" ? "border-amber-500/40 bg-amber-500/10 text-amber-300" : "border-amber-400 bg-amber-100 text-amber-900"
-                    }`}>
-                      OFFSET: {tzOffsetHours > 0 ? `+${tzOffsetHours}h` : `${tzOffsetHours}h`}
-                    </span>
-                  )}
-                  <button
-                    onClick={() => { setTzOffsetHours(0); playBeep(440); }}
-                    disabled={tzOffsetHours === 0}
-                    className={`px-2 py-0.5 border text-[9px] font-bold uppercase transition cursor-pointer ${
-                      tzOffsetHours === 0
-                        ? "border-neutral-800 text-neutral-600 cursor-not-allowed"
-                        : theme === "dark" ? "border-[#383733] bg-[#262624] text-neutral-300 hover:text-white" : "border-neutral-300 bg-neutral-100 text-neutral-800"
-                    }`}
-                  >
-                    Reset to Now
-                  </button>
-                </div>
-              </div>
-
-              {/* Time Travel 24-Hour Offset Slider */}
-              <div className="space-y-1.5 p-3 border border-inherit bg-[#141412]/50">
-                <div className="flex items-center justify-between text-[10px] font-mono font-bold text-neutral-500">
-                  <span>-12h PAST</span>
-                  <span className={SKIN_CONFIG[skin].textAccent}>TIME-TRAVEL SLIDER ({tzOffsetHours === 0 ? "LIVE NOW" : `${tzOffsetHours > 0 ? "+" : ""}${tzOffsetHours}h SHIFT`})</span>
-                  <span>+12h FUTURE</span>
-                </div>
-                <input
-                  type="range"
-                  min={-12}
-                  max={12}
-                  step={1}
-                  value={tzOffsetHours}
-                  onChange={(e) => {
-                    setTzOffsetHours(Number(e.target.value));
-                    playBeep(600 + Number(e.target.value) * 20, 0.02);
-                  }}
-                  className="w-full accent-amber-500 cursor-pointer"
-                />
+                <span className="text-[10px] font-mono text-neutral-500">LIVE SYNCHRONIZED</span>
               </div>
 
               {/* World Cities Grid */}
@@ -520,11 +409,8 @@ export default function ChronoWatchCockpit() {
 
                   if (now) {
                     try {
-                      const targetMs = now.getTime() + tzOffsetHours * 3600 * 1000;
-                      const targetDate = new Date(targetMs);
-                      
-                      timeStr = targetDate.toLocaleTimeString("en-GB", { timeZone: zone.tz, hour12: false });
-                      dateStr = targetDate.toLocaleDateString("en-GB", { timeZone: zone.tz, month: "short", day: "numeric" });
+                      timeStr = now.toLocaleTimeString("en-GB", { timeZone: zone.tz, hour12: false });
+                      dateStr = now.toLocaleDateString("en-GB", { timeZone: zone.tz, month: "short", day: "numeric" });
                       
                       const hours = parseInt(timeStr.split(":")[0], 10);
                       isWorkHours = hours >= 9 && hours < 17;
@@ -562,7 +448,7 @@ export default function ChronoWatchCockpit() {
 
                       <div className="flex items-center justify-between text-[10px] text-neutral-500 font-medium">
                         <span>{dateStr}</span>
-                        <span className={SKIN_CONFIG[skin].textAccent}>[{zone.code}]</span>
+                        <span className="text-amber-500">[{zone.code}]</span>
                       </div>
                     </div>
                   );
