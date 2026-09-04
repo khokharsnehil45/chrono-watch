@@ -11,8 +11,6 @@ import {
   Globe,
   Sun,
   Moon,
-  Volume2,
-  VolumeX,
   Radio,
   Sliders,
   Maximize2,
@@ -300,18 +298,6 @@ export default function ChronoWatchCockpit() {
         </div>
 
         <div className="flex items-center gap-2">
-
-          <button
-            onClick={() => setSoundEnabled(!soundEnabled)}
-            className={`p-2 border transition cursor-pointer ${
-              soundEnabled
-                ? theme === "dark" ? "border-amber-500/40 bg-amber-500/10 text-amber-400" : "border-amber-400 bg-amber-100 text-amber-950 font-bold"
-                : theme === "dark" ? "border-[#383733] text-neutral-500" : "border-neutral-300 text-neutral-600 bg-white"
-            }`}
-            title="Toggle Sound"
-          >
-            {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-          </button>
 
           <button
             onClick={toggleFullscreen}
@@ -1131,9 +1117,9 @@ export default function ChronoWatchCockpit() {
           <span>SYNC: <strong>SYSTEM CLOCK 100% OFFLINE</strong></span>
         </div>
         <div className="flex items-center gap-2">
-          <span>AUDIO: <strong>WEB AUDIO SYNTH</strong></span>
-          <span>•</span>
           <span>PRECISION: <strong>SUB-MILLISECOND</strong></span>
+          <span>•</span>
+          <span>CALIBRATION: <strong>NTP SYNCHRONIZED</strong></span>
         </div>
       </footer>
 
