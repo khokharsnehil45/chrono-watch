@@ -362,7 +362,7 @@ export default function ChronoWatchCockpit() {
           <div className="space-y-4 sm:space-y-6">
             
             {/* Minimal & Sober Dashed Watch Box with Hardware Corner Reticles & Indiglo Backlight */}
-            <div className={`border-2 border-dashed p-8 sm:p-14 transition-all duration-300 relative group ${
+            <div className={`border-2 border-dashed p-4 sm:p-14 transition-all duration-300 relative group ${
               theme === "dark" 
                 ? "border-[#33322e] bg-[#161614] hover:border-neutral-400 lcd-matrix-dark" 
                 : "border-neutral-400 bg-white shadow-sm hover:border-neutral-800 lcd-matrix-light"
@@ -383,18 +383,18 @@ export default function ChronoWatchCockpit() {
               }`}>+</div>
 
               {/* Header inside box */}
-              <div className={`flex items-center justify-between text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider mb-3 ${
+              <div className={`flex items-center justify-between text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider mb-2 sm:mb-3 ${
                 theme === "dark" ? "text-neutral-500" : "text-neutral-700"
               }`}>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 sm:gap-2">
                   <span className="w-1.5 h-1.5 bg-amber-500 animate-pulse"></span>
-                  <span>{now ? Intl.DateTimeFormat().resolvedOptions().timeZone : "LOCAL TIME"}</span>
+                  <span className="truncate max-w-[170px] sm:max-w-none">{now ? Intl.DateTimeFormat().resolvedOptions().timeZone : "LOCAL TIME"}</span>
                 </div>
                 
                 {/* 12H / 24H Toggle */}
                 <button
                   onClick={() => setIs24Hour(!is24Hour)}
-                  className={`px-2 py-0.5 border text-[9px] font-mono font-bold uppercase transition cursor-pointer ${
+                  className={`px-2 py-0.5 border text-[9px] font-mono font-bold uppercase transition cursor-pointer active:scale-95 ${
                     theme === "dark" 
                       ? "border-neutral-700 bg-neutral-900 text-neutral-400 hover:text-white" 
                       : "border-neutral-400 bg-neutral-100 text-neutral-900 hover:bg-neutral-200 font-black"
@@ -408,8 +408,8 @@ export default function ChronoWatchCockpit() {
               {now && (() => {
                 const currentSec = now.getSeconds();
                 return (
-                  <div className="my-3 space-y-1">
-                    <div className="grid grid-cols-60 gap-[1.5px] sm:gap-[2px] h-2 sm:h-2.5 items-end">
+                  <div className="my-2 sm:my-3 space-y-1">
+                    <div className="grid grid-cols-60 gap-[1px] sm:gap-[2px] h-2 sm:h-2.5 items-end">
                       {Array.from({ length: 60 }).map((_, secIdx) => {
                         const isPastOrCurrent = secIdx <= currentSec;
                         const isCurrent = secIdx === currentSec;
@@ -459,14 +459,14 @@ export default function ChronoWatchCockpit() {
                 const secStr = String(now.getSeconds()).padStart(2, "0");
 
                 return (
-                  <div className="font-mono text-6xl sm:text-8xl md:text-9xl font-black tracking-tighter flex items-baseline justify-center gap-1 sm:gap-2 my-1 sm:my-3">
+                  <div className="font-mono text-4xl sm:text-7xl md:text-9xl font-black tracking-tight flex items-baseline justify-center gap-0.5 sm:gap-2 my-1 sm:my-3">
                     <span className={theme === "dark" ? "text-neutral-100 drop-shadow-sm" : "text-neutral-950 font-black"}>{hrsStr}</span>
                     <span className={`animate-pulse ${theme === "dark" ? "text-neutral-600" : "text-neutral-400 font-bold"}`}>:</span>
                     <span className={theme === "dark" ? "text-neutral-100 drop-shadow-sm" : "text-neutral-950 font-black"}>{minStr}</span>
                     <span className={`animate-pulse ${theme === "dark" ? "text-neutral-600" : "text-neutral-400 font-bold"}`}>:</span>
                     <span className={theme === "dark" ? "text-neutral-100 drop-shadow-sm" : "text-neutral-950 font-black"}>{secStr}</span>
                     {!is24Hour && (
-                      <span className={`text-xs sm:text-lg font-black ml-2 ${theme === "dark" ? "text-neutral-500" : "text-neutral-700"}`}>{ampm}</span>
+                      <span className={`text-[10px] sm:text-lg font-black ml-1 sm:ml-2 ${theme === "dark" ? "text-neutral-500" : "text-neutral-700"}`}>{ampm}</span>
                     )}
                   </div>
                 );
@@ -475,7 +475,7 @@ export default function ChronoWatchCockpit() {
               )}
 
               {/* Sober Date Line with Calibrated Spacing */}
-              <div className={`text-center text-xs sm:text-sm font-mono font-bold uppercase tracking-[0.25em] mt-1 ${
+              <div className={`text-center text-[11px] sm:text-sm font-mono font-bold uppercase tracking-[0.15em] sm:tracking-[0.25em] mt-1 ${
                 theme === "dark" ? "text-neutral-400" : "text-neutral-700"
               }`}>
                 {now ? now.toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "short", day: "numeric" }) : "---"}
@@ -872,11 +872,11 @@ export default function ChronoWatchCockpit() {
           <div className="space-y-4">
             
             {/* Minimal & Sober Dashed Stopwatch Box with Hardware Corner Reticles & Moving 60-Second Perimeter Border */}
-            <div className={`border-2 border-dashed p-6 sm:p-12 transition-all duration-300 relative group overflow-hidden ${
+            <div className={`border-2 border-dashed p-4 sm:p-12 transition-all duration-300 relative group overflow-hidden ${
               theme === "dark" 
                 ? "border-[#33322e] bg-[#161614] hover:border-neutral-400 lcd-matrix-dark" 
                 : "border-neutral-400 bg-white shadow-sm hover:border-neutral-800 lcd-matrix-light"
-            } text-center space-y-6`}>
+            } text-center space-y-4 sm:space-y-6`}>
 
               {/* Moving 60-Second Perimeter Boundary Track for Stopwatch */}
               {(() => {
@@ -926,46 +926,46 @@ export default function ChronoWatchCockpit() {
               </div>
 
               {/* Monospace Stopwatch Digits */}
-              <div className="font-mono text-5xl sm:text-8xl md:text-9xl font-black flex items-baseline justify-center gap-1 sm:gap-2">
+              <div className="font-mono text-4xl sm:text-8xl md:text-9xl font-black flex items-baseline justify-center gap-0.5 sm:gap-2">
                 <span className={textPrimary}>{sw.min}</span>
                 <span className={theme === "dark" ? "text-neutral-600" : "text-neutral-900 font-black"}>:</span>
                 <span className={textPrimary}>{sw.sec}</span>
                 <span className={theme === "dark" ? "text-neutral-600" : "text-neutral-900 font-black"}>.</span>
-                <span className={`${theme === "dark" ? "text-amber-500" : "text-amber-700 font-black"} text-3xl sm:text-5xl md:text-6xl w-20 sm:w-32 text-left`}>{sw.ms}</span>
+                <span className={`${theme === "dark" ? "text-amber-500" : "text-amber-700 font-black"} text-2xl sm:text-5xl md:text-6xl w-14 sm:w-32 text-left`}>{sw.ms}</span>
               </div>
 
               {/* Controls */}
-              <div className="flex items-center justify-center gap-3">
+              <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
                 <button
                   onClick={resetChrono}
-                  className={`px-4 py-3 border text-xs font-black uppercase transition cursor-pointer flex items-center gap-1.5 ${
+                  className={`px-3 sm:px-4 py-2.5 sm:py-3 border text-xs font-black uppercase transition cursor-pointer flex items-center gap-1.5 active:scale-95 ${
                     theme === "dark" ? "border-[#383733] bg-[#1c1c1a] text-neutral-300 hover:border-neutral-500" : "border-neutral-400 bg-neutral-100 hover:border-black text-neutral-950 font-black"
                   }`}
                 >
-                  <RotateCcw className="w-4 h-4" />
+                  <RotateCcw className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
                   <span>Reset</span>
                 </button>
 
                 <button
                   onClick={toggleChrono}
-                  className={`px-8 py-3 font-black text-sm uppercase transition cursor-pointer shadow flex items-center gap-2 ${
+                  className={`px-6 sm:px-8 py-2.5 sm:py-3 font-black text-xs sm:text-sm uppercase transition cursor-pointer shadow flex items-center gap-1.5 sm:gap-2 active:scale-95 ${
                     chronoRunning ? "bg-rose-500 hover:bg-rose-400 text-white" : "bg-amber-500 hover:bg-amber-400 text-black shadow-amber-500/20 font-black"
                   }`}
                 >
-                  {chronoRunning ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current" />}
+                  {chronoRunning ? <Pause className="w-3.5 sm:w-4 h-3.5 sm:h-4 fill-current" /> : <Play className="w-3.5 sm:w-4 h-3.5 sm:h-4 fill-current" />}
                   <span>{chronoRunning ? "Stop" : "Start"}</span>
                 </button>
 
                 <button
                   onClick={recordLap}
                   disabled={!chronoRunning}
-                  className={`px-4 py-3 border text-xs font-black uppercase transition cursor-pointer flex items-center gap-1.5 ${
+                  className={`px-3 sm:px-4 py-2.5 sm:py-3 border text-xs font-black uppercase transition cursor-pointer flex items-center gap-1.5 active:scale-95 ${
                     !chronoRunning
                       ? theme === "dark" ? "border-neutral-800 text-neutral-600 cursor-not-allowed" : "border-neutral-300 text-neutral-400 bg-neutral-100 cursor-not-allowed"
                       : theme === "dark" ? "border-amber-500/40 bg-amber-500/10 text-amber-400" : "border-amber-500 bg-amber-100 text-amber-950 font-black"
                   }`}
                 >
-                  <Flag className="w-4 h-4" />
+                  <Flag className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
                   <span>Split Lap</span>
                 </button>
               </div>
@@ -1004,11 +1004,11 @@ export default function ChronoWatchCockpit() {
           <div className="space-y-4">
             
             {/* Minimal & Sober Dashed Focus Timer Box with Hardware Corner Reticles & Moving Boundary */}
-            <div className={`border-2 border-dashed p-6 sm:p-12 transition-all duration-300 relative group overflow-hidden ${
+            <div className={`border-2 border-dashed p-4 sm:p-12 transition-all duration-300 relative group overflow-hidden ${
               theme === "dark" 
                 ? "border-[#33322e] bg-[#161614] hover:border-neutral-400 lcd-matrix-dark" 
                 : "border-neutral-400 bg-white shadow-sm hover:border-neutral-800 lcd-matrix-light"
-            } text-center space-y-6`}>
+            } text-center space-y-4 sm:space-y-6`}>
 
               {/* Moving 60-Second Perimeter Boundary Track for Focus Countdown */}
               {(() => {
@@ -1053,7 +1053,7 @@ export default function ChronoWatchCockpit() {
               }`}>+</div>
               
               {/* Presets */}
-              <div className="flex items-center justify-center gap-2 flex-wrap">
+              <div className="flex items-center justify-center gap-1.5 sm:gap-2 flex-wrap">
                 {[
                   { id: "POMODORO", label: "25m FOCUS", sec: 25 * 60 },
                   { id: "SHORT_BREAK", label: "5m BREAK", sec: 5 * 60 },
@@ -1063,10 +1063,10 @@ export default function ChronoWatchCockpit() {
                   <button
                     key={p.id}
                     onClick={() => applyIntervalPreset(p.id as any)}
-                    className={`px-3 py-1.5 border text-xs font-black uppercase transition cursor-pointer ${
+                    className={`px-2.5 sm:px-3 py-1 sm:py-1.5 border text-[10px] sm:text-xs font-black uppercase transition cursor-pointer active:scale-95 ${
                       intervalPreset === p.id
                         ? "bg-amber-500 text-black border-amber-500"
-                        : theme === "dark" ? "border-[#383733] bg-[#141412] text-neutral-400" : "border-neutral-300 bg-neutral-100 text-neutral-700"
+                        : theme === "dark" ? "border-[#383733] bg-[#141412] text-neutral-400" : "border-neutral-300 bg-neutral-100 text-neutral-700 font-bold"
                     }`}
                   >
                     {p.label}
@@ -1075,7 +1075,7 @@ export default function ChronoWatchCockpit() {
               </div>
 
               {/* Large Timer Countdown */}
-              <div className="font-mono text-6xl sm:text-9xl font-black tracking-tight my-4">
+              <div className="font-mono text-5xl sm:text-9xl font-black tracking-tight my-2 sm:my-4">
                 <span className={intervalRemainingSec === 0 ? "text-rose-500" : textPrimary}>
                   {formatTimer(intervalRemainingSec)}
                 </span>
@@ -1090,24 +1090,24 @@ export default function ChronoWatchCockpit() {
               </div>
 
               {/* Controls */}
-              <div className="flex items-center justify-center gap-3">
+              <div className="flex items-center justify-center gap-2 sm:gap-3">
                 <button
                   onClick={() => { setIntervalRunning(false); setIntervalRemainingSec(intervalDurationSec); playBeep(330); }}
-                  className={`px-4 py-3 border text-xs font-black uppercase transition cursor-pointer flex items-center gap-1.5 ${
-                    theme === "dark" ? "border-[#383733] bg-[#1c1c1a] text-neutral-300" : "border-neutral-300 bg-neutral-100 text-neutral-800"
+                  className={`px-4 py-2.5 sm:py-3 border text-xs font-black uppercase transition cursor-pointer flex items-center gap-1.5 active:scale-95 ${
+                    theme === "dark" ? "border-[#383733] bg-[#1c1c1a] text-neutral-300" : "border-neutral-300 bg-neutral-100 text-neutral-800 font-bold"
                   }`}
                 >
-                  <RotateCcw className="w-4 h-4" />
+                  <RotateCcw className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
                   <span>Reset</span>
                 </button>
 
                 <button
                   onClick={() => { setIntervalRunning(!intervalRunning); playBeep(intervalRunning ? 440 : 880); }}
-                  className={`px-8 py-3 font-black text-sm uppercase transition cursor-pointer shadow flex items-center gap-2 ${
+                  className={`px-6 sm:px-8 py-2.5 sm:py-3 font-black text-xs sm:text-sm uppercase transition cursor-pointer shadow flex items-center gap-1.5 sm:gap-2 active:scale-95 ${
                     intervalRunning ? "bg-rose-500 hover:bg-rose-400 text-white" : "bg-amber-500 hover:bg-amber-400 text-black shadow-amber-500/20"
                   }`}
                 >
-                  {intervalRunning ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current" />}
+                  {intervalRunning ? <Pause className="w-3.5 sm:w-4 h-3.5 sm:h-4 fill-current" /> : <Play className="w-3.5 sm:w-4 h-3.5 sm:h-4 fill-current" />}
                   <span>{intervalRunning ? "Pause" : "Start Focus"}</span>
                 </button>
               </div>
