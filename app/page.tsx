@@ -26,7 +26,8 @@ import {
   ChevronDown,
   ChevronUp,
   Calendar,
-  BarChart3
+  BarChart3,
+  Compass
 } from "lucide-react";
 
 type Mode = "CLOCK" | "CHRONO" | "INTERVAL" | "METRONOME";
@@ -48,6 +49,48 @@ const DEFAULT_ZONES: WorldZone[] = [
   { city: "BERLIN", tz: "Europe/Berlin", code: "CEST" },
 ];
 
+export interface MoonPhaseInfo {
+  phaseName: string;
+  fraction: number; // 0.0 - 1.0 (illumination)
+  phaseIndex: number; // 0 - 7
+  ageDays: number;
+  symbol: string;
+}
+
+export function getMoonPhase(date: Date): MoonPhaseInfo {
+  // Known reference new moon: January 11, 2024 at 11:57 UTC
+  const refNewMoon = new Date(Date.UTC(2024, 0, 11, 11, 57, 0)).getTime();
+  const synodicMonth = 29.53058867 * 86400 * 1000;
+  const diff = date.getTime() - refNewMoon;
+  const phaseCycle = (diff % synodicMonth + synodicMonth) % synodicMonth;
+  const normalizedPhase = phaseCycle / synodicMonth; // 0.0 to 1.0
+  const ageDays = normalizedPhase * 29.53;
+
+  // 8 Phases
+  const phaseIndex = Math.floor(normalizedPhase * 8) % 8;
+  const phases = [
+    { name: "NEW MOON", symbol: "🌑" },
+    { name: "WAXING CRESCENT", symbol: "🌒" },
+    { name: "FIRST QUARTER", symbol: "🌓" },
+    { name: "WAXING GIBBOUS", symbol: "🌔" },
+    { name: "FULL MOON", symbol: "🌕" },
+    { name: "WANING GIBBOUS", symbol: "🌖" },
+    { name: "LAST QUARTER", symbol: "🌗" },
+    { name: "WANING CRESCENT", symbol: "🌘" },
+  ];
+
+  // Illumination calculation (approximate cosine curve)
+  const illumination = 0.5 * (1 - Math.cos(2 * Math.PI * normalizedPhase));
+
+  return {
+    phaseName: phases[phaseIndex].name,
+    fraction: illumination,
+    phaseIndex,
+    ageDays: Math.round(ageDays * 10) / 10,
+    symbol: phases[phaseIndex].symbol,
+  };
+}
+
 export default function ChronoWatchCockpit() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [activeMode, setActiveMode] = useState<Mode>("CLOCK");
@@ -55,6 +98,7 @@ export default function ChronoWatchCockpit() {
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [is24Hour, setIs24Hour] = useState<boolean>(true);
   const [showWorldClock, setShowWorldClock] = useState<boolean>(false);
+  const [showAstronomy, setShowAstronomy] = useState<boolean>(false);
   const [telemetryView, setTelemetryView] = useState<"DAY" | "MONTH" | "YEAR">("DAY");
 
   // Stopwatch state
@@ -623,6 +667,142 @@ export default function ChronoWatchCockpit() {
                   </div>
                 </div>
               )}
+            </div>
+
+            {/* Collapsible Moon Phase & Astronomy Matrix Box */}
+            <div className={`border transition-all duration-200 ${
+              theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-[#d4d2c7] bg-white shadow-xs"
+            }`}>
+              {/* Clickable Header Button */}
+              <button
+                onClick={() => {
+                  setShowAstronomy(!showAstronomy);
+                  playBeep(showAstronomy ? 440 : 720);
+                }}
+                className={`w-full p-4 flex items-center justify-between text-left cursor-pointer transition-colors ${
+                  theme === "dark" ? "hover:bg-[#20201d]" : "hover:bg-neutral-50"
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className={`p-1 border ${
+                    theme === "dark" ? "border-amber-500/30 bg-amber-500/10 text-amber-400" : "border-amber-300 bg-amber-100 text-amber-800"
+                  }`}>
+                    <Compass className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className={`text-xs font-black uppercase tracking-wider ${textPrimary}`}>
+                      LUNAR PHASE & ASTRONOMY MATRIX
+                    </div>
+                    <div className="text-[10px] text-neutral-500 font-mono">
+                      {now ? `${getMoonPhase(now).phaseName} • ${(getMoonPhase(now).fraction * 100).toFixed(0)}% ILLUMINATION` : "ASTRONOMICAL TELEMETRY"}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <span className={`text-[9px] font-mono font-bold px-2 py-0.5 border ${
+                    showAstronomy
+                      ? theme === "dark" ? "border-amber-500/40 bg-amber-500/10 text-amber-300" : "border-amber-400 bg-amber-100 text-amber-900"
+                      : theme === "dark" ? "border-neutral-800 text-neutral-500" : "border-neutral-200 text-neutral-600"
+                  }`}>
+                    {showAstronomy ? "OPEN" : "COLLAPSED"}
+                  </span>
+                  {showAstronomy ? (
+                    <ChevronUp className="w-4 h-4 text-neutral-400" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 text-neutral-400" />
+                  )}
+                </div>
+              </button>
+
+              {/* Collapsible Content */}
+              {showAstronomy && now && (() => {
+                const moon = getMoonPhase(now);
+                const allPhases = [
+                  { name: "NEW MOON", symbol: "🌑", idx: 0 },
+                  { name: "WAXING CRESCENT", symbol: "🌒", idx: 1 },
+                  { name: "FIRST QUARTER", symbol: "🌓", idx: 2 },
+                  { name: "WAXING GIBBOUS", symbol: "🌔", idx: 3 },
+                  { name: "FULL MOON", symbol: "🌕", idx: 4 },
+                  { name: "WANING GIBBOUS", symbol: "🌖", idx: 5 },
+                  { name: "LAST QUARTER", symbol: "🌗", idx: 6 },
+                  { name: "WANING CRESCENT", symbol: "🌘", idx: 7 },
+                ];
+
+                return (
+                  <div className={`p-4 border-t ${theme === "dark" ? "border-[#2c2b28] bg-[#141412]" : "border-[#e5e3d8] bg-[#fcfbf9]"} space-y-4`}>
+                    
+                    {/* Primary Lunar Telemetry Bar */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                      <div className={`p-3 border ${theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-[#d4d2c7] bg-white"} space-y-1`}>
+                        <div className="text-[9px] font-bold text-neutral-500 uppercase">CURRENT PHASE</div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl">{moon.symbol}</span>
+                          <span className={`text-xs font-black font-mono ${textPrimary}`}>{moon.phaseName}</span>
+                        </div>
+                      </div>
+
+                      <div className={`p-3 border ${theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-[#d4d2c7] bg-white"} space-y-1`}>
+                        <div className="text-[9px] font-bold text-neutral-500 uppercase">ILLUMINATION</div>
+                        <div className={`text-lg font-black font-mono text-amber-500`}>
+                          {(moon.fraction * 100).toFixed(1)}%
+                        </div>
+                        <div className="text-[9px] text-neutral-500">SURFACE REFLECTIVITY</div>
+                      </div>
+
+                      <div className={`p-3 border ${theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-[#d4d2c7] bg-white"} space-y-1`}>
+                        <div className="text-[9px] font-bold text-neutral-500 uppercase">LUNAR AGE</div>
+                        <div className={`text-lg font-black font-mono ${textPrimary}`}>
+                          {moon.ageDays} <span className="text-xs text-neutral-500 font-normal">DAYS</span>
+                        </div>
+                        <div className="text-[9px] text-neutral-500">IN 29.53d SYNODIC CYCLE</div>
+                      </div>
+
+                      <div className={`p-3 border ${theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-[#d4d2c7] bg-white"} space-y-1`}>
+                        <div className="text-[9px] font-bold text-neutral-500 uppercase">NEXT FULL MOON</div>
+                        <div className={`text-lg font-black font-mono ${textPrimary}`}>
+                          {moon.ageDays < 14.8 ? (14.8 - moon.ageDays).toFixed(1) : (29.53 - moon.ageDays + 14.8).toFixed(1)} <span className="text-xs text-neutral-500 font-normal">DAYS</span>
+                        </div>
+                        <div className="text-[9px] text-neutral-500">PEAK ILLUMINATION</div>
+                      </div>
+                    </div>
+
+                    {/* 8-Phase Visual Track */}
+                    <div className="space-y-2">
+                      <div className="text-[9px] font-mono font-bold text-neutral-500 uppercase tracking-wider">
+                        29.5-DAY SYNODIC PHASE PROGRESSION
+                      </div>
+
+                      <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5">
+                        {allPhases.map((p) => {
+                          const isActive = moon.phaseIndex === p.idx;
+                          return (
+                            <div
+                              key={p.name}
+                              className={`p-2 border text-center transition-colors ${
+                                isActive
+                                  ? theme === "dark" ? "border-amber-500 bg-amber-500/10 shadow-xs shadow-amber-500/20" : "border-amber-500 bg-amber-100"
+                                  : theme === "dark" ? "border-neutral-800 bg-neutral-900/50 opacity-60" : "border-neutral-200 bg-white opacity-70"
+                              }`}
+                            >
+                              <div className="text-base my-0.5">{p.symbol}</div>
+                              <div className={`text-[7px] font-mono font-bold truncate ${isActive ? "text-amber-400" : "text-neutral-500"}`}>
+                                {p.name}
+                              </div>
+                              {isActive && (
+                                <div className="text-[6px] font-bold bg-amber-500 text-black px-1 py-0.2 mt-1 uppercase">
+                                  ACTIVE
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                  </div>
+                );
+              })()}
             </div>
 
           </div>
