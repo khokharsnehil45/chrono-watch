@@ -326,138 +326,87 @@ export default function ChronoWatchCockpit() {
         {activeMode === "CLOCK" && (
           <div className="space-y-4 sm:space-y-6">
             
-            {/* Physical Watch Bezel Case with Corner Screws & Lugs */}
-            <div className={`border-4 ${
-              theme === "dark" ? "border-[#2c2b27] bg-[#141412] shadow-2xl shadow-black/80" : "border-[#b8b5a8] bg-[#f5f4ef] shadow-xl"
-            } p-3 sm:p-5 relative`}>
+            {/* Simple Dashed Holding Box with Hover Glow Highlight */}
+            <div className={`border-2 border-dashed p-6 sm:p-12 transition-all duration-200 group relative ${
+              theme === "dark" 
+                ? "border-[#383733] bg-[#181816] hover:border-amber-500 hover:bg-amber-500/[0.03] hover:shadow-lg hover:shadow-amber-500/5" 
+                : "border-[#d4d2c7] bg-white hover:border-amber-600 hover:bg-amber-50/30 hover:shadow-md"
+            }`}>
               
-              {/* Outer Physical Watch Lugs / Mount Accents */}
-              <div className="absolute -top-3 left-8 w-12 h-3 bg-[#383733] border-t border-x border-[#525049] hidden sm:block"></div>
-              <div className="absolute -top-3 right-8 w-12 h-3 bg-[#383733] border-t border-x border-[#525049] hidden sm:block"></div>
-              <div className="absolute -bottom-3 left-8 w-12 h-3 bg-[#383733] border-b border-x border-[#525049] hidden sm:block"></div>
-              <div className="absolute -bottom-3 right-8 w-12 h-3 bg-[#383733] border-b border-x border-[#525049] hidden sm:block"></div>
-
-              {/* 4 Corner Screws (Hex / Torx Bolts) */}
-              <div className="absolute top-2 left-2 w-3.5 h-3.5 rounded-none border border-[#525049] bg-[#242420] flex items-center justify-center font-mono text-[9px] text-neutral-400 select-none">
-                +
-              </div>
-              <div className="absolute top-2 right-2 w-3.5 h-3.5 rounded-none border border-[#525049] bg-[#242420] flex items-center justify-center font-mono text-[9px] text-neutral-400 select-none">
-                +
-              </div>
-              <div className="absolute bottom-2 left-2 w-3.5 h-3.5 rounded-none border border-[#525049] bg-[#242420] flex items-center justify-center font-mono text-[9px] text-neutral-400 select-none">
-                +
-              </div>
-              <div className="absolute bottom-2 right-2 w-3.5 h-3.5 rounded-none border border-[#525049] bg-[#242420] flex items-center justify-center font-mono text-[9px] text-neutral-400 select-none">
-                +
-              </div>
-
-              {/* Top Bezel Case Technical Engravings */}
-              <div className="flex items-center justify-between px-3 py-1 mb-2 border-b border-[#2c2b27] text-[8px] sm:text-[10px] font-mono font-bold tracking-widest text-neutral-500 uppercase">
+              {/* Header inside dashed box */}
+              <div className="flex items-center justify-between text-[10px] sm:text-xs font-black uppercase text-neutral-500 group-hover:text-amber-500 transition-colors mb-2">
                 <span className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 bg-amber-500 animate-ping"></span>
-                  <span>CALIBRE CW-01 // 32.768 kHz</span>
+                  <span className="w-1.5 h-1.5 bg-amber-500 transition-transform group-hover:scale-125"></span>
+                  <span>SYSTEM LOCAL TIME</span>
                 </span>
-                <span className="hidden sm:inline">SWISS INDUSTRIAL SPEC • 50 BAR</span>
-                <span className="text-amber-500 font-black">
-                  {now ? Intl.DateTimeFormat().resolvedOptions().timeZone.toUpperCase() : "SYNCING"}
-                </span>
-              </div>
-
-              {/* Inner Recessed Matte LCD Display Box */}
-              <div className={`p-4 sm:p-10 border-2 ${
-                theme === "dark" 
-                  ? "border-amber-500/40 bg-[#0f0f0d] shadow-inner" 
-                  : "border-amber-600 bg-amber-50/50 shadow-inner"
-              } text-center relative overflow-hidden`}>
                 
-                {/* LCD Top Status Flags */}
-                <div className="flex items-center justify-between text-[9px] sm:text-[11px] font-black uppercase text-amber-500 mb-2">
-                  <span className="flex items-center gap-1">
-                    <span className="px-1.5 py-0.2 border border-amber-500/40 bg-amber-500/10">GPS LOCK</span>
-                    <span className="px-1.5 py-0.2 border border-emerald-500/40 bg-emerald-500/10 text-emerald-400">RTC 1.0</span>
-                  </span>
-                  
-                  {/* 12H / 24H Toggle Button */}
-                  <button
-                    onClick={() => setIs24Hour(!is24Hour)}
-                    className={`px-2 py-0.5 border text-[9px] font-bold uppercase transition cursor-pointer ${
-                      theme === "dark" ? "border-amber-500/50 bg-[#1c1c1a] text-amber-300 hover:bg-amber-500/20" : "border-amber-400 bg-white text-amber-900"
-                    }`}
-                  >
-                    MODE: {is24Hour ? "24 HR" : "12 HR (AM/PM)"}
-                  </button>
-                </div>
-
-                {/* Primary Huge Monospace Digits */}
-                {now ? (() => {
-                  let hours = now.getHours();
-                  let ampm = "";
-                  if (!is24Hour) {
-                    ampm = hours >= 12 ? "PM" : "AM";
-                    hours = hours % 12 || 12;
-                  }
-                  const hrsStr = String(hours).padStart(2, "0");
-                  const minStr = String(now.getMinutes()).padStart(2, "0");
-                  const secStr = String(now.getSeconds()).padStart(2, "0");
-
-                  return (
-                    <div className="relative my-2 sm:my-4">
-                      {/* Faint Background 88:88:88 Ghost Segments */}
-                      <div className={`absolute inset-0 font-mono text-5xl sm:text-8xl md:text-9xl font-black tracking-tight flex items-baseline justify-center gap-1 sm:gap-3 pointer-events-none opacity-5 select-none ${textPrimary}`}>
-                        <span>88</span>
-                        <span>:</span>
-                        <span>88</span>
-                        <span>:</span>
-                        <span>88</span>
-                      </div>
-
-                      {/* Active Live Digits */}
-                      <div className="font-mono text-5xl sm:text-8xl md:text-9xl font-black tracking-tight flex items-baseline justify-center gap-1 sm:gap-3">
-                        <span className={textPrimary}>{hrsStr}</span>
-                        <span className="text-amber-500 animate-pulse">:</span>
-                        <span className={textPrimary}>{minStr}</span>
-                        <span className="text-amber-500 animate-pulse">:</span>
-                        <span className="text-amber-500 font-bold">{secStr}</span>
-                        {!is24Hour && (
-                          <span className="text-xs sm:text-xl font-black text-amber-400 ml-1 sm:ml-2">{ampm}</span>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })() : (
-                  <div className="text-4xl text-neutral-600 py-8 font-mono">00:00:00</div>
-                )}
-
-                {/* Date Banner */}
-                <div className={`text-xs sm:text-sm font-bold uppercase tracking-widest ${textSecondary}`}>
-                  {now ? now.toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" }) : "---"}
-                </div>
-
-                {/* Day Progress Indicator */}
-                {now && (
-                  <div className="mt-6 space-y-1.5 max-w-md mx-auto">
-                    <div className="flex items-center justify-between text-[10px] text-neutral-500 font-bold font-mono">
-                      <span>SOLAR CYCLE PROGRESS</span>
-                      <span className="text-amber-500">
-                        {Math.round(((now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()) / 86400) * 100)}%
-                      </span>
-                    </div>
-                    <div className="w-full h-2 bg-neutral-900 border border-[#383733] overflow-hidden">
-                      <div
-                        className="h-full bg-amber-500"
-                        style={{ width: `${((now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()) / 86400) * 100}%` }}
-                      />
-                    </div>
-                  </div>
-                )}
-
+                {/* 12H / 24H Toggle */}
+                <button
+                  onClick={() => setIs24Hour(!is24Hour)}
+                  className={`px-2 py-0.5 border text-[9px] font-bold uppercase transition cursor-pointer ${
+                    theme === "dark" 
+                      ? "border-[#383733] group-hover:border-amber-500/50 bg-[#1c1c1a] text-neutral-300 group-hover:text-amber-300" 
+                      : "border-neutral-300 group-hover:border-amber-500 bg-neutral-100 text-neutral-800"
+                  }`}
+                >
+                  {is24Hour ? "24 HR" : "12 HR"}
+                </button>
               </div>
 
-              {/* Bottom Bezel Case Engraving Bar */}
-              <div className="flex items-center justify-between px-3 py-1.5 mt-2 border-t border-[#2c2b27] text-[8px] sm:text-[9px] font-mono text-neutral-500 uppercase">
-                <span>EPOCH: {now ? Math.floor(now.getTime() / 1000) : "---"}</span>
-                <span className="text-neutral-400">CHRONO DYNAMICS GMBH</span>
-                <span>CHASSIS: TITANIUM-9</span>
+              {/* Primary Huge Digits */}
+              {now ? (() => {
+                let hours = now.getHours();
+                let ampm = "";
+                if (!is24Hour) {
+                  ampm = hours >= 12 ? "PM" : "AM";
+                  hours = hours % 12 || 12;
+                }
+                const hrsStr = String(hours).padStart(2, "0");
+                const minStr = String(now.getMinutes()).padStart(2, "0");
+                const secStr = String(now.getSeconds()).padStart(2, "0");
+
+                return (
+                  <div className="font-mono text-5xl sm:text-8xl md:text-9xl font-black tracking-tight flex items-baseline justify-center gap-1 sm:gap-3 my-2 sm:my-4">
+                    <span className={textPrimary}>{hrsStr}</span>
+                    <span className="text-amber-500 animate-pulse">:</span>
+                    <span className={textPrimary}>{minStr}</span>
+                    <span className="text-amber-500 animate-pulse">:</span>
+                    <span className="text-amber-500 font-bold">{secStr}</span>
+                    {!is24Hour && (
+                      <span className="text-xs sm:text-xl font-black text-amber-400 ml-1 sm:ml-2">{ampm}</span>
+                    )}
+                  </div>
+                );
+              })() : (
+                <div className="text-4xl text-neutral-600 py-8 font-mono text-center">00:00:00</div>
+              )}
+
+              {/* Date Banner */}
+              <div className={`text-center text-xs sm:text-sm font-bold uppercase tracking-widest ${textSecondary}`}>
+                {now ? now.toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" }) : "---"}
+              </div>
+
+              {/* Progress of Current Day */}
+              {now && (
+                <div className="mt-6 space-y-1.5 max-w-md mx-auto">
+                  <div className="flex items-center justify-between text-[10px] text-neutral-500 font-bold font-mono">
+                    <span>DAY CYCLE PROGRESS</span>
+                    <span className="text-amber-500">
+                      {Math.round(((now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()) / 86400) * 100)}%
+                    </span>
+                  </div>
+                  <div className="w-full h-2 bg-neutral-900 border border-[#383733] group-hover:border-amber-500/40 overflow-hidden transition-colors">
+                    <div
+                      className="h-full bg-amber-500 transition-all duration-300"
+                      style={{ width: `${((now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()) / 86400) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Ticking Epoch Tag */}
+              <div className="text-center mt-4 text-[9px] text-neutral-500 font-mono">
+                EPOCH: <strong className="text-neutral-400">{now ? Math.floor(now.getTime() / 1000) : "---"}</strong> • {now ? Intl.DateTimeFormat().resolvedOptions().timeZone : "SYNCING"}
               </div>
 
             </div>
