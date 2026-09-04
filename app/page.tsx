@@ -27,8 +27,7 @@ import {
   ChevronUp,
   Calendar,
   BarChart3,
-  Compass,
-  Lightbulb
+  Compass
 } from "lucide-react";
 
 type Mode = "CLOCK" | "CHRONO" | "INTERVAL";
@@ -101,17 +100,7 @@ export default function ChronoWatchCockpit() {
   const [showWorldClock, setShowWorldClock] = useState<boolean>(false);
   const [showAstronomy, setShowAstronomy] = useState<boolean>(false);
   const [telemetryView, setTelemetryView] = useState<"DAY" | "MONTH" | "YEAR">("DAY");
-  const [isBacklightActive, setIsBacklightActive] = useState<boolean>(false);
-  const backlightTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const triggerBacklight = () => {
-    playBeep(980, 0.03);
-    setIsBacklightActive(true);
-    if (backlightTimerRef.current) clearTimeout(backlightTimerRef.current);
-    backlightTimerRef.current = setTimeout(() => {
-      setIsBacklightActive(false);
-    }, 4500); // 4.5s Indiglo backlight glow
-  };
 
   // Stopwatch state
   const [chronoRunning, setChronoRunning] = useState<boolean>(false);
@@ -311,23 +300,6 @@ export default function ChronoWatchCockpit() {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Backlight / Illuminator Button */}
-          <button
-            onClick={triggerBacklight}
-            className={`px-2.5 py-1.5 border text-xs font-bold uppercase transition cursor-pointer flex items-center gap-1.5 active:scale-95 ${
-              isBacklightActive
-                ? "border-amber-400 bg-amber-500 text-black shadow-lg shadow-amber-500/30 font-black animate-pulse"
-                : theme === "dark" 
-                  ? "border-neutral-700 bg-neutral-900 text-neutral-400 hover:text-amber-400 hover:border-amber-500/40" 
-                  : "border-neutral-300 bg-white text-neutral-700 hover:text-amber-700 hover:border-amber-500"
-            }`}
-            title="Trigger Ambient Electroluminescent Backlight"
-          >
-            <Lightbulb className={`w-3.5 h-3.5 ${isBacklightActive ? "fill-current" : ""}`} />
-            <span className="hidden sm:inline text-[9px] font-mono font-black tracking-wider">
-              {isBacklightActive ? "LIGHT ON" : "LIGHT"}
-            </span>
-          </button>
 
           <button
             onClick={() => setSoundEnabled(!soundEnabled)}
@@ -390,12 +362,10 @@ export default function ChronoWatchCockpit() {
           <div className="space-y-4 sm:space-y-6">
             
             {/* Minimal & Sober Dashed Watch Box with Hardware Corner Reticles & Indiglo Backlight */}
-            <div className={`border-2 border-dashed p-8 sm:p-14 transition-all duration-500 relative group ${
-              isBacklightActive
-                ? theme === "dark" ? "backlight-glow-dark lcd-matrix-dark" : "backlight-glow-light lcd-matrix-light"
-                : theme === "dark" 
-                  ? "border-[#33322e] bg-[#161614] hover:border-neutral-400 lcd-matrix-dark" 
-                  : "border-neutral-400 bg-white shadow-sm hover:border-neutral-800 lcd-matrix-light"
+            <div className={`border-2 border-dashed p-8 sm:p-14 transition-all duration-300 relative group ${
+              theme === "dark" 
+                ? "border-[#33322e] bg-[#161614] hover:border-neutral-400 lcd-matrix-dark" 
+                : "border-neutral-400 bg-white shadow-sm hover:border-neutral-800 lcd-matrix-light"
             }`}>
               
               {/* 4 Hardware Corner Reticles / Precision Crosshairs */}
@@ -902,12 +872,10 @@ export default function ChronoWatchCockpit() {
           <div className="space-y-4">
             
             {/* Minimal & Sober Dashed Stopwatch Box with Hardware Corner Reticles & Moving 60-Second Perimeter Border */}
-            <div className={`border-2 border-dashed p-6 sm:p-12 transition-all duration-500 relative group overflow-hidden ${
-              isBacklightActive
-                ? theme === "dark" ? "backlight-glow-dark lcd-matrix-dark" : "backlight-glow-light lcd-matrix-light"
-                : theme === "dark" 
-                  ? "border-[#33322e] bg-[#161614] hover:border-neutral-400 lcd-matrix-dark" 
-                  : "border-neutral-400 bg-white shadow-sm hover:border-neutral-800 lcd-matrix-light"
+            <div className={`border-2 border-dashed p-6 sm:p-12 transition-all duration-300 relative group overflow-hidden ${
+              theme === "dark" 
+                ? "border-[#33322e] bg-[#161614] hover:border-neutral-400 lcd-matrix-dark" 
+                : "border-neutral-400 bg-white shadow-sm hover:border-neutral-800 lcd-matrix-light"
             } text-center space-y-6`}>
 
               {/* Moving 60-Second Perimeter Boundary Track for Stopwatch */}
@@ -1036,12 +1004,10 @@ export default function ChronoWatchCockpit() {
           <div className="space-y-4">
             
             {/* Minimal & Sober Dashed Focus Timer Box with Hardware Corner Reticles & Moving Boundary */}
-            <div className={`border-2 border-dashed p-6 sm:p-12 transition-all duration-500 relative group overflow-hidden ${
-              isBacklightActive
-                ? theme === "dark" ? "backlight-glow-dark lcd-matrix-dark" : "backlight-glow-light lcd-matrix-light"
-                : theme === "dark" 
-                  ? "border-[#33322e] bg-[#161614] hover:border-neutral-400 lcd-matrix-dark" 
-                  : "border-neutral-400 bg-white shadow-sm hover:border-neutral-800 lcd-matrix-light"
+            <div className={`border-2 border-dashed p-6 sm:p-12 transition-all duration-300 relative group overflow-hidden ${
+              theme === "dark" 
+                ? "border-[#33322e] bg-[#161614] hover:border-neutral-400 lcd-matrix-dark" 
+                : "border-neutral-400 bg-white shadow-sm hover:border-neutral-800 lcd-matrix-light"
             } text-center space-y-6`}>
 
               {/* Moving 60-Second Perimeter Boundary Track for Focus Countdown */}
