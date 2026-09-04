@@ -921,17 +921,17 @@ export default function ChronoWatchCockpit() {
                 theme === "dark" ? "text-neutral-600 group-hover:text-amber-500" : "text-neutral-400 group-hover:text-amber-600"
               }`}>+</div>
               
-              <div className="text-[10px] uppercase font-bold text-amber-500">
+              <div className={`text-[10px] uppercase font-bold ${theme === "dark" ? "text-amber-500" : "text-amber-800 font-black"}`}>
                 HIGH-RESOLUTION MILLISECOND TIMER
               </div>
 
               {/* Monospace Stopwatch Digits */}
               <div className="font-mono text-5xl sm:text-8xl md:text-9xl font-black flex items-baseline justify-center gap-1 sm:gap-2">
                 <span className={textPrimary}>{sw.min}</span>
-                <span className="text-neutral-600">:</span>
+                <span className={theme === "dark" ? "text-neutral-600" : "text-neutral-900 font-black"}>:</span>
                 <span className={textPrimary}>{sw.sec}</span>
-                <span className="text-neutral-600">.</span>
-                <span className="text-amber-500 text-3xl sm:text-5xl md:text-6xl w-20 sm:w-32 text-left">{sw.ms}</span>
+                <span className={theme === "dark" ? "text-neutral-600" : "text-neutral-900 font-black"}>.</span>
+                <span className={`${theme === "dark" ? "text-amber-500" : "text-amber-700 font-black"} text-3xl sm:text-5xl md:text-6xl w-20 sm:w-32 text-left`}>{sw.ms}</span>
               </div>
 
               {/* Controls */}
@@ -939,7 +939,7 @@ export default function ChronoWatchCockpit() {
                 <button
                   onClick={resetChrono}
                   className={`px-4 py-3 border text-xs font-black uppercase transition cursor-pointer flex items-center gap-1.5 ${
-                    theme === "dark" ? "border-[#383733] bg-[#1c1c1a] text-neutral-300 hover:border-neutral-500" : "border-neutral-300 bg-neutral-100 hover:border-neutral-800 text-neutral-800"
+                    theme === "dark" ? "border-[#383733] bg-[#1c1c1a] text-neutral-300 hover:border-neutral-500" : "border-neutral-400 bg-neutral-100 hover:border-black text-neutral-950 font-black"
                   }`}
                 >
                   <RotateCcw className="w-4 h-4" />
@@ -949,7 +949,7 @@ export default function ChronoWatchCockpit() {
                 <button
                   onClick={toggleChrono}
                   className={`px-8 py-3 font-black text-sm uppercase transition cursor-pointer shadow flex items-center gap-2 ${
-                    chronoRunning ? "bg-rose-500 hover:bg-rose-400 text-white" : "bg-amber-500 hover:bg-amber-400 text-black shadow-amber-500/20"
+                    chronoRunning ? "bg-rose-500 hover:bg-rose-400 text-white" : "bg-amber-500 hover:bg-amber-400 text-black shadow-amber-500/20 font-black"
                   }`}
                 >
                   {chronoRunning ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current" />}
@@ -961,8 +961,8 @@ export default function ChronoWatchCockpit() {
                   disabled={!chronoRunning}
                   className={`px-4 py-3 border text-xs font-black uppercase transition cursor-pointer flex items-center gap-1.5 ${
                     !chronoRunning
-                      ? "border-neutral-800 text-neutral-600 cursor-not-allowed"
-                      : theme === "dark" ? "border-amber-500/40 bg-amber-500/10 text-amber-400" : "border-amber-300 bg-amber-100 text-amber-900"
+                      ? theme === "dark" ? "border-neutral-800 text-neutral-600 cursor-not-allowed" : "border-neutral-300 text-neutral-400 bg-neutral-100 cursor-not-allowed"
+                      : theme === "dark" ? "border-amber-500/40 bg-amber-500/10 text-amber-400" : "border-amber-500 bg-amber-100 text-amber-950 font-black"
                   }`}
                 >
                   <Flag className="w-4 h-4" />
@@ -974,8 +974,8 @@ export default function ChronoWatchCockpit() {
 
             {/* Split Laps Matrix */}
             {laps.length > 0 && (
-              <div className={`p-4 border ${theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-[#d4d2c7] bg-white shadow-xs"} space-y-2`}>
-                <div className="flex items-center justify-between text-xs font-black uppercase text-neutral-400">
+              <div className={`p-4 border ${theme === "dark" ? "border-[#383733] bg-[#181816]" : "border-neutral-400 bg-white shadow-xs"} space-y-2`}>
+                <div className={`flex items-center justify-between text-xs font-black uppercase ${theme === "dark" ? "text-neutral-400" : "text-neutral-900"}`}>
                   <span>SPLIT LAPS ({laps.length})</span>
                   <span>TIME BUFFER</span>
                 </div>
@@ -986,7 +986,7 @@ export default function ChronoWatchCockpit() {
                     const osw = formatStopwatch(lap.overallTime);
                     return (
                       <div key={lap.lapNumber} className="py-2 flex items-center justify-between">
-                        <span className="font-bold text-amber-500">LAP {String(lap.lapNumber).padStart(2, "0")}</span>
+                        <span className={`font-bold ${theme === "dark" ? "text-amber-500" : "text-amber-800 font-black"}`}>LAP {String(lap.lapNumber).padStart(2, "0")}</span>
                         <span className={textSecondary}>+{lsw.min}:{lsw.sec}.{lsw.ms}</span>
                         <span className={`font-black ${textPrimary}`}>{osw.min}:{osw.sec}.{osw.ms}</span>
                       </div>
